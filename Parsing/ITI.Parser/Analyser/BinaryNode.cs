@@ -9,7 +9,6 @@ namespace ITI.Parser
 {
     public class BinaryNode : Node
     {
-
         public BinaryNode( TokenType operatorType, Node left, Node right )
         {
             OperatorType = operatorType;
@@ -17,15 +16,12 @@ namespace ITI.Parser
             Right = right;
         }
 
-        public TokenType OperatorType { get; private set; }
-        public Node Left { get; private set; }
-        public Node Right { get; private set; }
+        public TokenType OperatorType { get; }
+        public Node Left { get; }
+        public Node Right { get; }
 
         [DebuggerStepThrough]
-        internal override void Accept( NodeVisitor visitor )
-        {
-            visitor.Visit( this );
-        }
+        internal override void Accept( NodeVisitor visitor ) => visitor.Visit( this );
 
         public override string ToString()
         {

@@ -15,19 +15,12 @@ namespace ITI.Parser
             Value = value;
         }
 
-        public double Value { get; private set; }
-
+        public double Value { get; }
 
         [DebuggerStepThrough]
-        internal override void Accept( NodeVisitor visitor )
-        {
-            visitor.Visit( this );
-        }
+        internal override void Accept( NodeVisitor visitor ) => visitor.Visit( this );
 
-        public override string ToString()
-        {
-            return Value.ToString();
-        }
+        public override string ToString() => Value.ToString();
 
     }
 }

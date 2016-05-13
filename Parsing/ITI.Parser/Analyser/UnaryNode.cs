@@ -9,21 +9,19 @@ namespace ITI.Parser
 {
     public class UnaryNode : Node
     {
-
         public UnaryNode( TokenType operatorType, Node right )
         {
+            if( operatorType != TokenType.Minus ) throw new ArgumentException( nameof( operatorType ) );
             OperatorType = operatorType;
             Right = right;
         }
 
-        public TokenType OperatorType { get; private set; }
-        public Node Right { get; private set; }
+        public TokenType OperatorType { get; }
+
+        public Node Right { get; }
 
         [DebuggerStepThrough]
-        internal override void Accept( NodeVisitor visitor )
-        {
-            visitor.Visit( this );
-        }
+        internal override void Accept( NodeVisitor visitor ) => visitor.Visit( this );
 
         public override string ToString()
         {
