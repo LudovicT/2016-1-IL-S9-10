@@ -8,23 +8,23 @@ namespace ITI.Parser
 {
     public class EvalVisitor : NodeVisitor
     {
-        double _currentValue;
+        private double _currentValue;
 
-        public double Result { get { return _currentValue; } }
+        public double Result => _currentValue;
 
-        public override void Visit( IfNode n )
+        public override void Visit(IfNode n)
         {
-            VisitNode( n.Condition );
-            VisitNode( _currentValue >= 0 ? n.WhenTrue : n.WhenFalse );
+            VisitNode(n.Condition);
+            VisitNode(_currentValue >= 0 ? n.WhenTrue : n.WhenFalse);
         }
 
-        public override void Visit( BinaryNode n )
+        public override void Visit(BinaryNode n)
         {
-            VisitNode( n.Left );
+            VisitNode(n.Left);
             var left = _currentValue;
-            VisitNode( n.Right );
+            VisitNode(n.Right);
             var right = _currentValue;
-            switch( n.OperatorType )
+            switch (n.OperatorType)
             {
                 case TokenType.Mult: _currentValue = left * right; break;
                 case TokenType.Div: _currentValue = left / right; break;
@@ -33,17 +33,21 @@ namespace ITI.Parser
             }
         }
 
-        public override void Visit( UnaryNode n )
+        public override void Visit(UnaryNode n)
         {
-            VisitNode( n.Right );
+            VisitNode(n.Right);
             _currentValue = -_currentValue;
         }
 
-        public override void Visit( ConstantNode n )
+        public override void Visit(ConstantNode n)
         {
             _currentValue = n.Value;
         }
 
-
+        public override void Visit(VariableNode n)
+        {
+            if (n.Value == null) throw new InvalidOperationException($"Variable {n.Name} wasn't set.");
+            _currentValue = n.Value.Value;
+        }
     }
 }

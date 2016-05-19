@@ -8,24 +8,25 @@ namespace ITI.Parser
 {
     public class Analyser
     {
-        ITokenizer _tokenizer;
+        private ITokenizer _tokenizer;
 
-        public Node Analyse( ITokenizer tokenizer )
+        public Node Analyse(ITokenizer tokenizer)
         {
             _tokenizer = tokenizer;
-            if( _tokenizer.CurrentToken == TokenType.None ) _tokenizer.GetNextToken();
-            return HandleSuperExpression();
+            if (_tokenizer.CurrentToken == TokenType.None) _tokenizer.GetNextToken();
+            var node = HandleSuperExpression();
+            return node;
         }
 
         private Node HandleSuperExpression()
         {
             var cond = HandleExpression();
-            if( _tokenizer.Match( TokenType.QuestionMark ) )
+            if (_tokenizer.Match(TokenType.QuestionMark))
             {
                 var whenTrue = HandleExpression();
-                if( !_tokenizer.Match( TokenType.Colon ) ) return new ErrorNode( "Expected ':'." );
+                if (!_tokenizer.Match(TokenType.Colon)) return new ErrorNode("Expected ':'.");
                 var whenFalse = HandleExpression();
-                return new IfNode( cond, whenTrue, whenFalse );
+                return new IfNode(cond, whenTrue, whenFalse);
             }
             return cond;
         }
@@ -33,11 +34,11 @@ namespace ITI.Parser
         private Node HandleExpression()
         {
             var left = HandleTerm();
-            while( _tokenizer.CurrentToken == TokenType.Plus || _tokenizer.CurrentToken == TokenType.Minus )
+            while (_tokenizer.CurrentToken == TokenType.Plus || _tokenizer.CurrentToken == TokenType.Minus)
             {
                 var type = _tokenizer.CurrentToken;
                 _tokenizer.GetNextToken();
-                left = new BinaryNode( type, left, HandleTerm() );
+                left = new BinaryNode(type, left, HandleTerm());
             }
             return left;
         }
@@ -45,33 +46,35 @@ namespace ITI.Parser
         private Node HandleTerm()
         {
             var left = HandleFactor();
-            while( _tokenizer.CurrentToken == TokenType.Mult || _tokenizer.CurrentToken == TokenType.Div )
+            while (_tokenizer.CurrentToken == TokenType.Mult || _tokenizer.CurrentToken == TokenType.Div)
             {
                 var type = _tokenizer.CurrentToken;
                 _tokenizer.GetNextToken();
-                left = new BinaryNode( type, left, HandleFactor() );
+                left = new BinaryNode(type, left, HandleFactor());
             }
             return left;
         }
 
         private Node HandleFactor()
         {
-            bool isNeg = _tokenizer.Match( TokenType.Minus );
+            bool isNeg = _tokenizer.Match(TokenType.Minus);
             var e = HandlePositiveFactor();
-            return isNeg ? new UnaryNode( TokenType.Minus, e ) : e;
+            return isNeg ? new UnaryNode(TokenType.Minus, e) : e;
         }
-        
+
         private Node HandlePositiveFactor()
         {
             double numberValue;
-            if( _tokenizer.MatchDouble( out numberValue ) ) return new ConstantNode( numberValue );
-            if( _tokenizer.Match( TokenType.OpenPar ) )
+            string stringValue;
+            if (_tokenizer.MatchDouble(out numberValue)) return new ConstantNode(numberValue);
+            if (_tokenizer.MatchString(out stringValue)) return new VariableNode(stringValue);
+            if (_tokenizer.Match(TokenType.OpenPar))
             {
                 var e = HandleSuperExpression();
-                if( !_tokenizer.Match( TokenType.ClosePar ) ) return new ErrorNode( "Expected )." );
+                if (!_tokenizer.Match(TokenType.ClosePar)) return new ErrorNode("Expected ).");
                 return e;
             }
-            return new ErrorNode( "Expected number or (expression)." );
+            return new ErrorNode("Expected number or (expression).");
         }
     }
 }

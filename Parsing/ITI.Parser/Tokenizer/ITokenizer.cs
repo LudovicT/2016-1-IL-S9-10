@@ -18,13 +18,16 @@ namespace ITI.Parser
         /// </summary>
         /// <param name="t">Type of the expected token.</param>
         /// <returns>True if token is of the given type.</returns>
-        bool Match( TokenType t );
+        bool Match(TokenType t);
 
-        bool MatchInteger( int expected );
+        bool MatchInteger(int expected);
 
-        bool MatchInteger( out int value );
+        bool MatchInteger(out int value);
 
-        bool MatchDouble( out double value );
+        bool MatchDouble(out double value);
 
+        bool MatchString(string expected);
+
+        bool MatchString(out string value);
     }
 }

@@ -29,13 +29,11 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <StartAction>Program</StartAction>
     <StartProgram>$(SolutionDir)\packages\NUnit.Runners.Net4.2.6.4\tools\nunit.exe</StartProgram>
     <StartArguments>ITI.Parser.Tests.dll</StartArguments>
   </PropertyGroup>
-      
   <ItemGroup>
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
@@ -50,7 +48,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnalyserTests.cs" />
+    <Compile Include="DepthAndCountTests.cs" />
+    <Compile Include="SwapGenomeTests.cs" />
+    <Compile Include="NodeCreatorTests.cs" />
+    <Compile Include="MutationTests.cs" />
     <Compile Include="EvaluatorTests.cs" />
+    <Compile Include="GeneticAlgorithmTests.cs" />
     <Compile Include="TokenizerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

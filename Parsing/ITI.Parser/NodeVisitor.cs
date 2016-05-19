@@ -8,38 +8,39 @@ namespace ITI.Parser
 {
     public abstract class NodeVisitor
     {
-        public void VisitNode( Node n )
+        public void VisitNode(Node n)
         {
-            n.Accept( this );
+            n.Accept(this);
         }
 
-
-        public virtual void Visit( BinaryNode n )
+        public virtual void Visit(BinaryNode n)
         {
-            VisitNode( n.Left );
-            VisitNode( n.Right );
+            VisitNode(n.Left);
+            VisitNode(n.Right);
         }
 
-        public virtual void Visit( ConstantNode n )
-        {
-        }
-
-        public virtual void Visit( ErrorNode n )
+        public virtual void Visit(ConstantNode n)
         {
         }
 
-        public virtual void Visit( IfNode n )
+        public virtual void Visit(VariableNode n)
         {
-            VisitNode( n.Condition );
-            VisitNode( n.WhenTrue );
-            VisitNode( n.WhenFalse );
         }
 
-        public virtual void Visit( UnaryNode n )
+        public virtual void Visit(ErrorNode n)
         {
-            VisitNode( n.Right );
         }
 
+        public virtual void Visit(IfNode n)
+        {
+            VisitNode(n.Condition);
+            VisitNode(n.WhenTrue);
+            VisitNode(n.WhenFalse);
+        }
 
+        public virtual void Visit(UnaryNode n)
+        {
+            VisitNode(n.Right);
+        }
     }
 }

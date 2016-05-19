@@ -8,14 +8,15 @@ using System.Threading.Tasks;
 
 namespace ITI.Parser
 {
-    public class ConstantNode : Node
+    public class VariableNode : Node
     {
-        public ConstantNode(double value)
+        public VariableNode(string name)
         {
-            Value = value;
+            Name = name;
         }
 
-        public double Value { get; internal set; }
+        public string Name { get; internal set; }
+        public double? Value { get; set; }
 
         [DebuggerStepThrough]
         internal override void Accept(NodeVisitor visitor) => visitor.Visit(this);
@@ -23,6 +24,6 @@ namespace ITI.Parser
         public override int Count => 1;
         public override int Depth => 1;
 
-        public override string ToString() => Value.ToString(CultureInfo.InvariantCulture);
+        public override string ToString() => Name;
     }
 }
