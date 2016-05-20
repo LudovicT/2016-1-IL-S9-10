@@ -20,7 +20,7 @@ namespace ITI.Parser.Tests
             Node n1 = new Analyser().Analyse(new StringTokenizer(text));
             Node n2 = new Analyser().Analyse(new StringTokenizer(text));
 
-            MutationVisitor mutationVisitor = new MutationVisitor(mutationRate: 1);
+            MutationVisitor mutationVisitor = new MutationVisitor(new NodeCreator(),mutationRate: 1);
             mutationVisitor.Mutate(ref n2);
 
             EvalVisitor visitor = new EvalVisitor();

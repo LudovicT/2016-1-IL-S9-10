@@ -30,9 +30,9 @@ namespace ITI.Parser
             }
         }
 
-        public MutationVisitor(double mutationRate = 0.05, int maxDepth = 50, int maxSize = 500, int? seed = 7)
+        public MutationVisitor(NodeCreator nodeCreator, double mutationRate = 0.05, int maxDepth = 50, int maxSize = 500,  int? seed = 7)
         {
-            Init(mutationRate, maxDepth, maxSize, seed);
+            Init(mutationRate, maxDepth, maxSize, seed, nodeCreator);
         }
 
         public void Mutate(ref Node n)
@@ -107,14 +107,14 @@ namespace ITI.Parser
             _rootNode = null;
         }
 
-        private void Init(double mutationRate, int maxDepth, int maxCount, int? seed)
+        private void Init(double mutationRate, int maxDepth, int maxCount, int? seed, NodeCreator nodeCreator)
         {
             _mutationRate = mutationRate;
             _maxCount = maxCount;
             _maxDepth = maxDepth;
             _random = seed.HasValue ? new Random(seed.Value) : new Random();
             _hasMutation = _random.NextDouble() <= _mutationRate;
-            _nodeCreator = new NodeCreator(_random);
+            _nodeCreator = nodeCreator;
         }
 
         private void Explore(Node n)

@@ -24,14 +24,14 @@ namespace ITI.Parser
         private readonly NodeCreator _creator;
         private readonly List<double> _fitnessList;
         private double _totalFitness;
-        private VariableSetVisitor _variableSetVisitor;
+        private VariableVisitor _variableSetVisitor;
 
         public Node BestNode { get; private set; }
-        public Func<Node, double> FitnessFunction { get; set; }
+        public Func<GeneticAlgorithm, Node, double> FitnessFunction { get; set; }
         public bool Elitism { get; set; }
         public bool ReverseComparison { get; set; }
 
-        public GeneticAlgorithm(double crossoverRate, double mutationRate, int populationSize, double maxGeneration, int maxGenomeDepth, int maxGenomeSize, int seed, Func<Node, double> fitnessFunction = null)
+        public GeneticAlgorithm(double crossoverRate, double mutationRate, int populationSize, double maxGeneration, int maxGenomeDepth, int maxGenomeSize, int seed, Func<GeneticAlgorithm, Node, double> fitnessFunction = null)
         {
             CrossoverRate = crossoverRate;
             MutationRate = mutationRate;
@@ -43,9 +43,9 @@ namespace ITI.Parser
             _currentGeneration = new List<Node>();
             _swapper = new SwapGenomeVisitor();
             _random = new Random(seed);
-            _mutationVisitor = new MutationVisitor(mutationRate, maxGenomeDepth, maxGenomeSize, seed);
             _creator = new NodeCreator(_random, 2);
-            _variableSetVisitor = new VariableSetVisitor();
+            _variableSetVisitor = new VariableVisitor();
+            _mutationVisitor = new MutationVisitor(_creator, mutationRate, maxGenomeDepth, maxGenomeSize, seed);
             FitnessFunction = fitnessFunction;
             Elitism = false;
             ReverseComparison = false;
@@ -106,7 +106,7 @@ namespace ITI.Parser
 
         private bool NodeContainsVariable(Node genome, string variableName)
         {
-            _variableSetVisitor.SetVariable(genome, variableName, 0);
+            _variableSetVisitor.SetVariable(genome, variableName);
             return _variableSetVisitor.VariableOccurence != 0;
         }
 
@@ -169,7 +169,7 @@ namespace ITI.Parser
         private void RankPopulation()
         {
             _totalFitness = 0;
-            _currentGeneration.ForEach(x => x.Fitness = FitnessFunction(x));
+            _currentGeneration.ForEach(x => x.Fitness = FitnessFunction(this, x));
             _totalFitness = _currentGeneration.Where(x => !double.IsNaN(x.Fitness) && !double.IsInfinity(x.Fitness)).Sum(x => x.Fitness);
             _currentGeneration.Sort(new GenomeComparer(false));
 
@@ -244,6 +244,11 @@ namespace ITI.Parser
 
             _currentGeneration.Clear();
             _currentGeneration.AddRange(nextGeneration);
+        }
+
+        public bool SetVariable(string name, double value)
+        {
+            return _creator.SetVariable(name, value);
         }
     }
 }

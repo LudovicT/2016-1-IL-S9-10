@@ -49,7 +49,7 @@
     <Compile Include="Analyser\Node.cs" />
     <Compile Include="GeneticAlgorithm\SwapGenomeVisitor.cs" />
     <Compile Include="GeneticAlgorithm\DeepCopyVisitor.cs" />
-    <Compile Include="VariableSetVisitor.cs" />
+    <Compile Include="GeneticAlgorithm\VariableVisitor.cs" />
     <Compile Include="EvalVisitor.cs" />
     <Compile Include="GeneticAlgorithm\GeneticAlgorithm.cs" />
     <Compile Include="GeneticAlgorithm\GenomeComparer.cs" />

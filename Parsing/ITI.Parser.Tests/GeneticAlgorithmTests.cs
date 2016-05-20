@@ -11,7 +11,7 @@ namespace ITI.Parser.Tests
     public class GeneticAlgorithmTests
     {
         public List<int[]> _values = new List<int[]>();
-        private VariableSetVisitor variableSetVisitor = new VariableSetVisitor();
+        private VariableVisitor variableVisitor = new VariableVisitor();
         private EvalVisitor evalVisitor = new EvalVisitor();
 
         [SetUp]
@@ -34,13 +34,13 @@ namespace ITI.Parser.Tests
             var bestByGeneration = GA.Run();
         }
 
-        private double test_function(Node n)
+        private double test_function(GeneticAlgorithm origin ,Node n)
         {
             double fitness = 0;
             foreach (var value in _values)
             {
-                variableSetVisitor.SetVariable(n, "A", value[0]);
-                variableSetVisitor.SetVariable(n, "B", value[1]);
+                origin.SetVariable("A", value[0]);
+                origin.SetVariable("B", value[1]);
                 evalVisitor.VisitNode(n);
                 fitness -= Math.Abs(value[2] - evalVisitor.Result);
             }

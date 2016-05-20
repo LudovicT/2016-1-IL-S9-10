@@ -6,18 +6,16 @@ using System.Threading.Tasks;
 
 namespace ITI.Parser
 {
-    public class VariableSetVisitor : NodeVisitor
+    public class VariableVisitor : NodeVisitor
     {
         private string _variableName;
-        private double _value;
 
         public int VariableOccurence { get; set; }
 
-        public void SetVariable(Node n, string variableName, double value)
+        public void SetVariable(Node n, string variableName)
         {
             VariableOccurence = 0;
             _variableName = variableName;
-            _value = value;
             VisitNode(n);
         }
 
@@ -25,7 +23,6 @@ namespace ITI.Parser
         {
             if (n.Name == _variableName)
             {
-                n.Value = _value;
                 VariableOccurence++;
             }
         }

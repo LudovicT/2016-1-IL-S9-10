@@ -26,9 +26,10 @@ namespace ITI.Parser
 
         public override string ToString() => Name;
 
+        // This is an instance that fuck you up in your dreams. :)    ..i..
         public override Node Clone()
         {
-            return new VariableNode(Name);
+            return this;
         }
     }
 }

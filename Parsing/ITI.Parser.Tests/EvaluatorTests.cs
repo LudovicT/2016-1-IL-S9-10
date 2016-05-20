@@ -27,23 +27,5 @@ namespace ITI.Parser.Tests
             double result = visitor.Result;
             Assert.That(result, Is.EqualTo(expectedResult));
         }
-
-        [TestCase("a", 3.0)]
-        [TestCase("a+8", 3.0 + 8.0)]
-        [TestCase("a*7/2", 3.0 * 7.0 / 2.0)]
-        public void test_evaluation_with_var(string text, double expectedResult)
-        {
-            Node n = new Analyser().Analyse(new StringTokenizer(text));
-
-            VariableSetVisitor setVisitor = new VariableSetVisitor();
-            setVisitor.SetVariable(n, "a", 3.0);
-
-            EvalVisitor visitor = new EvalVisitor();
-            visitor.VisitNode(n);
-
-            double result = visitor.Result;
-
-            Assert.That(result, Is.EqualTo(expectedResult));
-        }
     }
 }
