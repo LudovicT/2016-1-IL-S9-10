@@ -18,7 +18,7 @@ namespace ITI.Parser
         public double Value { get; }
 
         [DebuggerStepThrough]
-        internal override void Accept( NodeVisitor visitor ) => visitor.Visit( this );
+        internal override Node Accept( NodeVisitor visitor ) => visitor.Visit( this );
 
         public override string ToString() => Value.ToString();
 

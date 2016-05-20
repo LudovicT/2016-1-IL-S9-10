@@ -9,6 +9,6 @@ namespace ITI.Parser
     public abstract class Node
     {
 
-        internal abstract void Accept( NodeVisitor visitor );
+        internal abstract Node Accept( NodeVisitor visitor );
     }
 }

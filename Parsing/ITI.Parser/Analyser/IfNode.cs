@@ -21,10 +21,7 @@ namespace ITI.Parser
         public Node WhenFalse { get; private set; }
 
         [DebuggerStepThrough]
-        internal override void Accept( NodeVisitor visitor )
-        {
-            visitor.Visit( this );
-        }
+        internal override Node Accept( NodeVisitor visitor ) => visitor.Visit( this );
 
     }
 }
