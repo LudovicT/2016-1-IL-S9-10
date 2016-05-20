@@ -46,6 +46,7 @@
     <Compile Include="Analyser\ConstantNode.cs" />
     <Compile Include="Analyser\ErrorNode.cs" />
     <Compile Include="Analyser\Node.cs" />
+    <Compile Include="Analyser\VariableNode.cs" />
     <Compile Include="EvalVisitor.cs" />
     <Compile Include="NodeVisitor.cs" />
     <Compile Include="Tokenizer\ITokenizer.cs" />

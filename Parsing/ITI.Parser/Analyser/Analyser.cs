@@ -65,6 +65,8 @@ namespace ITI.Parser
         {
             double numberValue;
             if( _tokenizer.MatchDouble( out numberValue ) ) return new ConstantNode( numberValue );
+            string identifier;
+            if( _tokenizer.MatchIdentifier( out identifier ) ) return new VariableNode( identifier );
             if( _tokenizer.Match( TokenType.OpenPar ) )
             {
                 var e = HandleSuperExpression();

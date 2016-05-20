@@ -26,5 +26,7 @@ namespace ITI.Parser
 
         bool MatchDouble( out double value );
 
+        bool MatchIdentifier( out string identifier );
+
     }
 }

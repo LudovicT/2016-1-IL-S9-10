@@ -114,7 +114,7 @@ namespace ITI.Parser
             return false;
         }
 
-        public bool Match( string identifier )
+        public bool MatchIdentifier( string identifier )
         {
             if( _curToken == TokenType.Identifier && _identifierValue == identifier)
             {
@@ -124,7 +124,7 @@ namespace ITI.Parser
             return false;
         }
 
-        public bool Match( out string identifier )
+        public bool MatchIdentifier( out string identifier )
         {
             if( _curToken == TokenType.Identifier )
             {

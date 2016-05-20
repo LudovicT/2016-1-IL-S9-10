@@ -24,6 +24,8 @@ namespace ITI.Parser
 
         public virtual Node Visit( ConstantNode n ) => n;
 
+        public virtual Node Visit( VariableNode n ) => n;
+
         public virtual Node Visit( ErrorNode n ) => n;
 
         public virtual Node Visit( IfNode n )
