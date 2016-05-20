@@ -39,14 +39,30 @@ namespace ITI.Parser
 
             var right = VisitNode(n.Right);
 
-            if (left is ConstantNode && right is ConstantNode)
+            var vLeft = left as VariableNode;
+            var vRight = right as VariableNode;
+
+            if( vLeft != null && vRight != null && vRight.Name == vLeft.Name )
             {
                 switch (n.OperatorType)
                 {
-                    case TokenType.Mult: return new ConstantNode(((ConstantNode)left).Value * ((ConstantNode)right).Value);
-                    case TokenType.Div: return new ConstantNode(((ConstantNode)left).Value / ((ConstantNode)right).Value);
-                    case TokenType.Plus: return new ConstantNode(((ConstantNode)left).Value + ((ConstantNode)right).Value);
-                    case TokenType.Minus: return new ConstantNode(((ConstantNode)left).Value - ((ConstantNode)right).Value);
+                    case TokenType.Div: return new ConstantNode(1);
+                    case TokenType.Plus: return new BinaryNode(TokenType.Mult, new ConstantNode(2), vLeft );
+                    case TokenType.Minus: return new ConstantNode(0);
+                }
+            }
+
+            var cLeft = left as ConstantNode;
+            var cRight = right as ConstantNode;
+
+            if (cLeft != null && cRight != null)
+            {
+                switch (n.OperatorType)
+                {
+                    case TokenType.Mult: return new ConstantNode(cLeft.Value * cRight.Value);
+                    case TokenType.Div: return new ConstantNode(cLeft.Value / cRight.Value);
+                    case TokenType.Plus: return new ConstantNode(cLeft.Value + cRight.Value);
+                    case TokenType.Minus: return new ConstantNode(cLeft.Value - cRight.Value);
                 }
             }
 
@@ -58,6 +74,24 @@ namespace ITI.Parser
         public override Node Visit(UnaryNode n)
         {
             Node right = VisitNode(n.Right);
+
+            var uRight = right as UnaryNode;
+            if( uRight != null )
+            {
+                if( n.OperatorType == TokenType.Minus )
+                {
+                    return Visit( uRight.OperatorType == TokenType.Minus 
+                        ? new UnaryNode(TokenType.Plus, uRight.Right) 
+                        : new UnaryNode(TokenType.Minus, uRight.Right) );
+                }
+                else if (n.OperatorType == TokenType.Plus)
+                {
+                    return Visit(uRight.OperatorType == TokenType.Minus
+                        ? new UnaryNode(TokenType.Minus, uRight.Right)
+                        : new UnaryNode(TokenType.Plus, uRight.Right));
+                }
+            }
+
             var cRight = right as ConstantNode;
             if (cRight != null)
             {
