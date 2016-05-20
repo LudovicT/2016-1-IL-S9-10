@@ -8,10 +8,7 @@ namespace ITI.Parser
 {
     public class EvalVisitor : NodeVisitor
     {
-        private double _currentValue;
         private Dictionary<string, double> _values;
-
-        public double Result => _currentValue;
 
         public void EvalWithVariable(Node n, Dictionary<string, double> values)
         {
@@ -21,46 +18,71 @@ namespace ITI.Parser
 
         public override Node Visit(IfNode n)
         {
-            VisitNode(n.Condition);
-            VisitNode(_currentValue >= 0 ? n.WhenTrue : n.WhenFalse);
-            return n;
+            var c = VisitNode(n.Condition);
+            ConstantNode cN = c as ConstantNode;
+            if( cN != null )
+            {
+                return cN.Value >= 0 ? VisitNode(n.WhenTrue) : VisitNode(n.WhenFalse);
+            }
+
+            var t = VisitNode(n.WhenTrue);
+            var f = VisitNode(n.WhenFalse);
+
+            return c != n.Condition || t != n.WhenTrue || f != n.WhenFalse
+                ? new IfNode(c, t, f) :
+                n;
         }
 
         public override Node Visit(BinaryNode n)
         {
-            VisitNode(n.Left);
-            var left = _currentValue;
-            VisitNode(n.Right);
-            var right = _currentValue;
-            switch (n.OperatorType)
+            var left = VisitNode(n.Left);
+
+            var right = VisitNode(n.Right);
+
+            if (left is ConstantNode && right is ConstantNode)
             {
-                case TokenType.Mult: _currentValue = left * right; break;
-                case TokenType.Div: _currentValue = left / right; break;
-                case TokenType.Plus: _currentValue = left + right; break;
-                case TokenType.Minus: _currentValue = left - right; break;
+                switch (n.OperatorType)
+                {
+                    case TokenType.Mult: return new ConstantNode(((ConstantNode)n.Left).Value * ((ConstantNode)n.Right).Value);
+                    case TokenType.Div: return new ConstantNode(((ConstantNode)n.Left).Value / ((ConstantNode)n.Right).Value);
+                    case TokenType.Plus: return new ConstantNode(((ConstantNode)n.Left).Value + ((ConstantNode)n.Right).Value);
+                    case TokenType.Minus: return new ConstantNode(((ConstantNode)n.Left).Value - ((ConstantNode)n.Right).Value);
+                }
             }
-            return n;
+
+            return left != n.Left || right != n.Right
+                ? new BinaryNode(n.OperatorType, left, right)
+                : n;
         }
 
         public override Node Visit(UnaryNode n)
         {
-            VisitNode(n.Right);
-            _currentValue = n.OperatorType == TokenType.Minus ? -_currentValue : _currentValue;
-            return n;
+            Node right = VisitNode(n.Right);
+            var cRight = right as ConstantNode;
+            if (cRight != null)
+            {
+                return n.OperatorType == TokenType.Minus ? new ConstantNode(-cRight.Value) : new ConstantNode(cRight.Value);
+            }
+            return right != n.Right
+                ? new UnaryNode(n.OperatorType, right)
+                : n;
         }
 
         public override Node Visit(ConstantNode n)
         {
-            _currentValue = n.Value;
+            _isConstant = true;
             return n;
         }
 
         public override Node Visit(VariableNode n)
         {
-            _currentValue = _values[n.Name];
+            double value;
+            if (_values.TryGetValue(n.Name, out value))
+            {
+                _isConstant = true;
+                return new ConstantNode(_values[n.Name]);
+            }
             return n;
-            //if (n.Value == null) throw new InvalidOperationException($"Variable {n.Name} wasn't set.");
-            //_currentValue = n.Value.Value;
         }
     }
 }
