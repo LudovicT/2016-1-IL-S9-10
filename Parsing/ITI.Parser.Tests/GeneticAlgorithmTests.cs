@@ -15,20 +15,20 @@ namespace ITI.Parser.Tests
         private EvalVisitor evalVisitor = new EvalVisitor();
 
         [SetUp]
-        private void Startup()
+        public void Startup()
         {
-            _values.Add(new[] { 1, 2, 300 });
-            _values.Add(new[] { 2, 3, 500 });
-            _values.Add(new[] { 3, 4, 700 });
+            _values.Add(new[] { 1, 8, 300 });
+            _values.Add(new[] { 2, 7, 500 });
+            _values.Add(new[] { 3, 6, 700 });
             _values.Add(new[] { 4, 5, 900 });
-            _values.Add(new[] { 5, 6, 1100 });
-            _values.Add(new[] { 6, 7, 1300 });
+            _values.Add(new[] { 5, 4, 1100 });
+            _values.Add(new[] { 6, 3, 1300 });
         }
 
         [Test]
         public void best_fitness_level()
         {
-            GeneticAlgorithm GA = new GeneticAlgorithm(0.50, 0.1, 10000, 1000, 6, 500, 11, test_function);
+            GeneticAlgorithm GA = new GeneticAlgorithm(0.1, 1, 1000, 5000, 8, 100, 10, test_function);
             var bestByGeneration = GA.Run();
         }
 

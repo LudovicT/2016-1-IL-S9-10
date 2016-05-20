@@ -117,11 +117,11 @@ namespace ITI.Parser
                 child = nbTry % 2 == 0
                     ? _swapper.SwapGenome(parent1, parent2, first, second)
                     : _swapper.SwapGenome(parent2, parent1, second, first);
-                nbTry++; if (nbTry > 25000)
+                nbTry++; if (nbTry > 250)
                 {
                     child = _creator.RandomNode(MaxGenomeDepth, MaxGenomeSize);
                 }
-                else if (nbTry > 5000)
+                else if (nbTry > 50)
                 {
                     Node fitNode = _creator.RandomNode(MaxGenomeDepth / 2, MaxGenomeSize / 2);
                     int third = _random.Next(fitNode.Count);
@@ -206,7 +206,7 @@ namespace ITI.Parser
                 }
 
                 int nbTry = 0;
-                int maxTry = 50;
+                int maxTry = 10;
                 Node child1Backup = new Analyser().Analyse(new StringTokenizer(child1.ToString()));
                 Node child2Backup = new Analyser().Analyse(new StringTokenizer(child2.ToString()));
                 do

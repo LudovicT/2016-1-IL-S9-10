@@ -113,6 +113,7 @@ namespace ITI.Parser
 
         private void MutateBinaryNode(BinaryNode n)
         {
+            if (PossibleDepth(n) < 1 || PossibleCount(n) < 1) return;
             int kind = _random.Next(3);
             switch (kind)
             {
@@ -140,6 +141,7 @@ namespace ITI.Parser
 
         private void MutateIfNode(IfNode n)
         {
+            if (PossibleDepth(n) < 1 || PossibleCount(n) < 1) return;
             int kind = _random.Next(3);
             switch (kind)
             {
@@ -162,6 +164,7 @@ namespace ITI.Parser
 
         private void MutateUnaryNode(UnaryNode n)
         {
+            if (PossibleDepth(n) < 1 || PossibleCount(n) < 1) return;
             int kind = _random.Next(2);
             switch (kind)
             {
