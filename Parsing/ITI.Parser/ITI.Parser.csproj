@@ -48,6 +48,7 @@
     <Compile Include="Analyser\ErrorNode.cs" />
     <Compile Include="Analyser\Node.cs" />
     <Compile Include="GeneticAlgorithm\SwapGenomeVisitor.cs" />
+    <Compile Include="GeneticAlgorithm\DeepCopyVisitor.cs" />
     <Compile Include="VariableSetVisitor.cs" />
     <Compile Include="EvalVisitor.cs" />
     <Compile Include="GeneticAlgorithm\GeneticAlgorithm.cs" />

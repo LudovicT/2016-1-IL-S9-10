@@ -38,5 +38,10 @@ namespace ITI.Parser
             }
             return $"({Left}{op}{Right})";
         }
+
+        public override Node Clone()
+        {
+            return new BinaryNode(OperatorType, Left.Clone(), Right.Clone());
+        }
     }
 }

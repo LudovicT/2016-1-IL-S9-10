@@ -36,5 +36,10 @@ namespace ITI.Parser
             }
             return $"{op}({Right})";
         }
+
+        public override Node Clone()
+        {
+            return new UnaryNode(OperatorType, Right.Clone());
+        }
     }
 }

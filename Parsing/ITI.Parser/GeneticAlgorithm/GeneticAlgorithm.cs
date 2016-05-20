@@ -209,29 +209,29 @@ namespace ITI.Parser
 
                 int nbTry = 0;
                 int maxTry = 10;
-                Node child1Backup = new Analyser().Analyse(new StringTokenizer(child1.ToString()));
-                Node child2Backup = new Analyser().Analyse(new StringTokenizer(child2.ToString()));
+                Node child1Backup = child1.Clone();
+                Node child2Backup = child2.Clone();
                 do
                 {
-                    child1 = new Analyser().Analyse(new StringTokenizer(child1Backup.ToString()));
+                    child1 = child1Backup.Clone();
                     _mutationVisitor.Mutate(ref child1);
                     nbTry++;
                 } while (nbTry < maxTry && (!NodeContainsVariable(child1, "A") || !NodeContainsVariable(child1, "B")));
                 if (nbTry == maxTry)
                 {
-                    child1 = new Analyser().Analyse(new StringTokenizer(child1Backup.ToString()));
+                    child1 = child1Backup.Clone();
                 }
 
                 nbTry = 0;
                 do
                 {
-                    child2 = new Analyser().Analyse(new StringTokenizer(child2Backup.ToString()));
+                    child2 = child2Backup.Clone();
                     _mutationVisitor.Mutate(ref child2);
                     nbTry++;
                 } while (nbTry < maxTry && (!NodeContainsVariable(child2, "A") || !NodeContainsVariable(child2, "B")));
                 if (nbTry == maxTry)
                 {
-                    child2 = new Analyser().Analyse(new StringTokenizer(child2Backup.ToString()));
+                    child2 = child2Backup.Clone();
                 }
 
                 nextGeneration.Add(child1);

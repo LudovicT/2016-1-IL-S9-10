@@ -13,5 +13,7 @@ namespace ITI.Parser
         public abstract int Count { get; }
         public abstract int Depth { get; }
         public virtual double Fitness { get; set; }
+
+        public abstract Node Clone();
     }
 }

@@ -25,5 +25,10 @@ namespace ITI.Parser
         public override int Depth => 1;
 
         public override string ToString() => Name;
+
+        public override Node Clone()
+        {
+            return new VariableNode(Name);
+        }
     }
 }

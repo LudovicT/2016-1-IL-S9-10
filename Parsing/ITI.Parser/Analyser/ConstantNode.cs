@@ -24,5 +24,10 @@ namespace ITI.Parser
         public override int Depth => 1;
 
         public override string ToString() => Value.ToString(CultureInfo.InvariantCulture);
+
+        public override Node Clone()
+        {
+            return new ConstantNode(Value);
+        }
     }
 }

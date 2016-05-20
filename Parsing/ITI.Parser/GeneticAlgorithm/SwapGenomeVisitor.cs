@@ -31,7 +31,7 @@ namespace ITI.Parser
             Mode = TargetMode.Get;
             VisitNode(from);
 
-            Node result = new Analyser().Analyse(new StringTokenizer(to.ToString()));
+            Node result = to.Clone();
 
             Mode = TargetMode.Set;
             TargetIndex = toIndex;

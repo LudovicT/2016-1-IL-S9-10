@@ -26,5 +26,10 @@ namespace ITI.Parser
         {
             return $"Error: {Message}";
         }
+
+        public override Node Clone()
+        {
+            return new ErrorNode(Message);
+        }
     }
 }

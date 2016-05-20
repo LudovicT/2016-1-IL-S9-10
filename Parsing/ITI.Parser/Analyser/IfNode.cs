@@ -30,5 +30,10 @@ namespace ITI.Parser
         {
             return $"({Condition} ? {WhenTrue} : {WhenFalse})";
         }
+
+        public override Node Clone()
+        {
+            return new IfNode(Condition.Clone(), WhenTrue.Clone(), WhenFalse.Clone());
+        }
     }
 }
