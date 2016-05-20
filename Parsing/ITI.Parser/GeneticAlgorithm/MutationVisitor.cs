@@ -52,12 +52,6 @@ namespace ITI.Parser
             return TryMutate(n);
         }
 
-        public void Reset()
-        {
-
-            _rootNode = null;
-        }
-
         private void Init(NodeCreator nodeCreator, double mutationRate, int maxDepth, int maxCount, int? seed)
         {
             _mutationRate = mutationRate;
@@ -70,24 +64,9 @@ namespace ITI.Parser
 
         private Node TryMutate(Node n)
         {
-            if (PossibleDepth(n) < 1 || PossibleCount(n) < 1)
-            {
-                return n;
-            }
-
             return HasMutation 
-                ? _nodeCreator.RandomNode(PossibleDepth(n), PossibleCount(n)) 
+                ? _nodeCreator.RandomNode(_maxDepth, _maxCount) 
                 : n;
-        }
-
-        private int PossibleDepth(Node n)
-        {
-            return _maxDepth - _rootNode.Depth + n.Depth;
-        }
-
-        private int PossibleCount(Node n)
-        {
-            return _maxCount - _rootNode.Count + n.Count;
         }
     }
 }

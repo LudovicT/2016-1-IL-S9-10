@@ -20,8 +20,8 @@ namespace ITI.Parser.Tests
             Node n2 = new Analyser().Analyse(new StringTokenizer(text2));
             Random r = new Random(7);
 
-            SwapGenomeVisitor genomeSwapper = new SwapGenomeVisitor();
-            Node n3 = genomeSwapper.SwapGenome(n, n2, r.Next(n.Count), r.Next(n2.Count));
+            SwapGenomeVisitor genomeSwapper = new SwapGenomeVisitor(r);
+            Node n3 = genomeSwapper.Swap(n, n2);
 
             EvalVisitor visitor = new EvalVisitor();
             visitor.VisitNode(n2);

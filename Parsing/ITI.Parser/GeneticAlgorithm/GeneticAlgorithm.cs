@@ -114,31 +114,7 @@ namespace ITI.Parser
 
         private Node CrossOver(Node parent1, Node parent2)
         {
-            int nbTry = 0;
-            Node child;
-            do
-            {
-                int first = _random.Next(parent1.Count);
-                int second = _random.Next(parent2.Count);
-                child = nbTry % 2 == 0
-                    ? _swapper.SwapGenome(parent1, parent2, first, second)
-                    : _swapper.SwapGenome(parent2, parent1, second, first);
-                nbTry++;
-                if (nbTry > 10)
-                {
-                    child = _creator.RandomNode(MaxGenomeDepth, MaxGenomeSize);
-                }
-                else if (nbTry > 50)
-                {
-                    Node fitNode = _creator.RandomNode(MaxGenomeDepth / 2, MaxGenomeSize / 2);
-                    int third = _random.Next(fitNode.Count);
-                    if (nbTry % 4 == 0) child = _swapper.SwapGenome(fitNode, parent2, third, second);
-                    else if (nbTry % 4 == 1) child = _swapper.SwapGenome(fitNode, parent1, third, first);
-                    else if (nbTry % 4 == 2) child = _swapper.SwapGenome(parent1, fitNode, first, third);
-                    else if (nbTry % 4 == 3) child = _swapper.SwapGenome(parent2, fitNode, second, third);
-                }
-            } while (child.Count > MaxGenomeSize || child.Depth > MaxGenomeDepth || !NodeContainsVariable(child, "A") || !NodeContainsVariable(child, "B"));
-            return child;
+            return _swapper.Swap(parent1,parent2);
         }
 
         private int RouletteSelection()
@@ -209,32 +185,8 @@ namespace ITI.Parser
                     child2 = parent2;
                 }
 
-                int nbTry = 0;
-                int maxTry = 10;
-                Node child1Backup = child1.Clone();
-                Node child2Backup = child2.Clone();
-                do
-                {
-                    child1 = child1Backup.Clone();
-                    _mutationVisitor.Mutate(ref child1);
-                    nbTry++;
-                } while (nbTry < maxTry && (!NodeContainsVariable(child1, "A") || !NodeContainsVariable(child1, "B")));
-                if (nbTry == maxTry)
-                {
-                    child1 = child1Backup.Clone();
-                }
-
-                nbTry = 0;
-                do
-                {
-                    child2 = child2Backup.Clone();
-                    _mutationVisitor.Mutate(ref child2);
-                    nbTry++;
-                } while (nbTry < maxTry && (!NodeContainsVariable(child2, "A") || !NodeContainsVariable(child2, "B")));
-                if (nbTry == maxTry)
-                {
-                    child2 = child2Backup.Clone();
-                }
+                child1 = _mutationVisitor.VisitNode(child1);
+                child2 = _mutationVisitor.VisitNode(child2);
 
                 nextGeneration.Add(child1);
                 nextGeneration.Add(child2);
