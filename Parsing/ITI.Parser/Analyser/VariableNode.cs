@@ -29,7 +29,7 @@ namespace ITI.Parser
         // This is an instance that fuck you up in your dreams. :)    ..i..
         public override Node Clone()
         {
-            return this;
+            return new VariableNode(Name);
         }
     }
 }

@@ -13,6 +13,7 @@ namespace ITI.Parser.Tests
         public List<int[]> _values = new List<int[]>();
         private VariableVisitor variableVisitor = new VariableVisitor();
         private EvalVisitor evalVisitor = new EvalVisitor();
+        Dictionary<string, double> dic = new Dictionary<string, double>();
 
         [SetUp]
         public void Startup()
@@ -34,15 +35,16 @@ namespace ITI.Parser.Tests
             var bestByGeneration = GA.Run();
         }
 
-        private double test_function(GeneticAlgorithm origin ,Node n)
+        private double test_function(GeneticAlgorithm origin, Node n)
         {
             double fitness = 0;
             foreach (var value in _values)
             {
-                origin.SetVariable("A", value[0]);
-                origin.SetVariable("B", value[1]);
-                evalVisitor.VisitNode(n);
+                dic.Add("A", value[0]);
+                dic.Add("B", value[1]);
+                evalVisitor.EvalWithVariable(n, dic);
                 fitness -= Math.Abs(value[2] - evalVisitor.Result);
+                dic.Clear();
             }
             return fitness;
         }

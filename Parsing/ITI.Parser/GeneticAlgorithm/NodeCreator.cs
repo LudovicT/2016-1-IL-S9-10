@@ -10,7 +10,7 @@ namespace ITI.Parser
     public class NodeCreator
     {
         private readonly Random _random;
-        private List<VariableNode> _variables;
+        private List<string> _variableNames;
         public int MaxVariable { get; }
 
         public NodeCreator(int maxVariable = 0)
@@ -27,7 +27,7 @@ namespace ITI.Parser
         {
             _random = random;
             MaxVariable = maxVariable;
-            _variables = Enumerable.Range('A', maxVariable).Select(x => new VariableNode((char)x + string.Empty)).ToList();
+            _variableNames = Enumerable.Range('A', maxVariable).Select(x => (char)x + string.Empty).ToList();
         }
 
         public Node RandomNode(int maxDepth, int maxSize)
@@ -83,7 +83,7 @@ namespace ITI.Parser
         private Node RandomVariableNode()
         {
             int variableIndex = _random.Next(MaxVariable);
-            return _variables[variableIndex];
+            return new VariableNode(_variableNames[variableIndex]);
         }
 
         public BinaryNode RandomBinaryNode(int maxDepth, int maxCount)
@@ -127,16 +127,6 @@ namespace ITI.Parser
                 default:
                     throw new InvalidOperationException("Invalid operator type");
             }
-        }
-
-        public bool SetVariable(string name, double value)
-        {
-            var variable = _variables.FirstOrDefault(x => x.Name == name);
-
-            if (variable == null) return false;
-
-            variable.Value = value;
-            return true;
         }
     }
 }

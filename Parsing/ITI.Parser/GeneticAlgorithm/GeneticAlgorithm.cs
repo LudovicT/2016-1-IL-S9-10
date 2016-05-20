@@ -245,10 +245,5 @@ namespace ITI.Parser
             _currentGeneration.Clear();
             _currentGeneration.AddRange(nextGeneration);
         }
-
-        public bool SetVariable(string name, double value)
-        {
-            return _creator.SetVariable(name, value);
-        }
     }
 }

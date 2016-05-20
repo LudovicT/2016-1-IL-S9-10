@@ -9,8 +9,14 @@ namespace ITI.Parser
     public class EvalVisitor : NodeVisitor
     {
         private double _currentValue;
+        private Dictionary<string, double> _values;
 
         public double Result => _currentValue;
+
+        public void EvalWithVariable(Node n, Dictionary<string, double> values)
+        {
+            _values = values;
+        }
 
         public override void Visit(IfNode n)
         {
@@ -46,8 +52,9 @@ namespace ITI.Parser
 
         public override void Visit(VariableNode n)
         {
-            if (n.Value == null) throw new InvalidOperationException($"Variable {n.Name} wasn't set.");
-            _currentValue = n.Value.Value;
+            _currentValue = _values[n.Name];
+            //if (n.Value == null) throw new InvalidOperationException($"Variable {n.Name} wasn't set.");
+            //_currentValue = n.Value.Value;
         }
     }
 }
