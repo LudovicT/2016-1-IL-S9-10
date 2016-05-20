@@ -60,7 +60,7 @@ namespace ITI.Parser
 
             CreateGenome();
             RankPopulation();
-            Node firstBest = _currentGeneration.LastOrDefault();
+            Node firstBest = ReverseComparison ? _currentGeneration.FirstOrDefault() : _currentGeneration.LastOrDefault();
             bestByGeneration.Add(firstBest);
             Debug.WriteLine("Gen 0");
             Debug.WriteLine($"Best node : {firstBest}");
@@ -76,10 +76,12 @@ namespace ITI.Parser
 
                 CreateNextGeneration();
                 RankPopulation();
-                Node currentBest = _currentGeneration.LastOrDefault(x => bestResultCount == 0 || !bestByGeneration.Any(y => y?.Fitness == 0 && y.ToString() == x.ToString()));
+                Node currentBest = ReverseComparison ?
+                    _currentGeneration.FirstOrDefault(x => bestResultCount == 0 || !bestByGeneration.Any(y => y?.Fitness == 0 && y.ToString() == x.ToString())) :
+                    _currentGeneration.LastOrDefault(x => bestResultCount == 0 || !bestByGeneration.Any(y => y?.Fitness == 0 && y.ToString() == x.ToString()));
                 if (bestResultCount > 0 && currentBest?.Fitness != 0)
                 {
-                    currentBest = _currentGeneration.LastOrDefault();
+                    currentBest = ReverseComparison ? _currentGeneration.FirstOrDefault() : _currentGeneration.LastOrDefault();
                 }
                 bestByGeneration.Add(currentBest);
                 Debug.WriteLine($"Gen {i + 1}");
@@ -122,7 +124,7 @@ namespace ITI.Parser
                     ? _swapper.SwapGenome(parent1, parent2, first, second)
                     : _swapper.SwapGenome(parent2, parent1, second, first);
                 nbTry++;
-                if (nbTry > 250)
+                if (nbTry > 10)
                 {
                     child = _creator.RandomNode(MaxGenomeDepth, MaxGenomeSize);
                 }
@@ -171,7 +173,7 @@ namespace ITI.Parser
             _totalFitness = 0;
             _currentGeneration.ForEach(x => x.Fitness = FitnessFunction(this, x));
             _totalFitness = _currentGeneration.Where(x => !double.IsNaN(x.Fitness) && !double.IsInfinity(x.Fitness)).Sum(x => x.Fitness);
-            _currentGeneration.Sort(new GenomeComparer(false));
+            _currentGeneration.Sort(new GenomeComparer(ReverseComparison));
 
             double fitness = 0.0;
             _fitnessList.Clear();
@@ -186,7 +188,7 @@ namespace ITI.Parser
         private void CreateNextGeneration()
         {
             List<Node> nextGeneration = new List<Node>();
-            Node g = _currentGeneration.LastOrDefault();
+            Node g = ReverseComparison ? _currentGeneration.FirstOrDefault() : _currentGeneration.LastOrDefault();
 
             for (int i = 0; i < PopulationSize; i += 2)
             {

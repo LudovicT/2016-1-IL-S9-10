@@ -16,6 +16,7 @@ namespace ITI.Parser
         public void EvalWithVariable(Node n, Dictionary<string, double> values)
         {
             _values = values;
+            VisitNode(n);
         }
 
         public override void Visit(IfNode n)
