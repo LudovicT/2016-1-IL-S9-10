@@ -10,8 +10,7 @@ namespace ITI.Parser
     {
         public Node VisitNode(Node n)
         {
-            n.Accept(this);
-            return n;
+            return n.Accept(this);
         }
 
         public virtual Node Visit(BinaryNode n)

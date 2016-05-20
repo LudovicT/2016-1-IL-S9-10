@@ -41,8 +41,8 @@ namespace ITI.Parser
             MaxGenomeSize = maxGenomeSize;
             _fitnessList = new List<double>();
             _currentGeneration = new List<Node>();
-            _swapper = new SwapGenomeVisitor();
             _random = new Random(seed);
+            _swapper = new SwapGenomeVisitor(_random);
             _creator = new NodeCreator(_random, 2);
             _variableSetVisitor = new VariableVisitor();
             _mutationVisitor = new MutationVisitor(_creator, mutationRate, maxGenomeDepth, maxGenomeSize, seed);
