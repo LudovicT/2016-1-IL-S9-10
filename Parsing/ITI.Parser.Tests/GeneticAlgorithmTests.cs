@@ -38,6 +38,8 @@ namespace ITI.Parser.Tests
         private double test_function(GeneticAlgorithm origin, Node n)
         {
             double fitness = 0;
+            n.Fitness -= n.Count*.1;
+            n.Fitness -= n.Depth * 0.5;
             foreach (var value in _values)
             {
                 dic.Add("A", value[0]);
@@ -46,7 +48,8 @@ namespace ITI.Parser.Tests
                 fitness -= Math.Abs(value[2] - evalVisitor.Result);
                 dic.Clear();
             }
-            return fitness;
+            
+            return double.IsNaN(fitness) || double.IsInfinity(fitness) ? fitness : fitness == 0 ?  0 : 1d/fitness;
         }
     }
 }

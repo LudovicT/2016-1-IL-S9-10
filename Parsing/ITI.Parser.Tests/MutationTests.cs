@@ -21,13 +21,13 @@ namespace ITI.Parser.Tests
             Node n2 = new Analyser().Analyse(new StringTokenizer(text));
 
             MutationVisitor mutationVisitor = new MutationVisitor(new NodeCreator(),mutationRate: 1);
-            mutationVisitor.Mutate(ref n2);
+            var n3 = mutationVisitor.VisitNode(n2);
 
             EvalVisitor visitor = new EvalVisitor();
             visitor.VisitNode(n1);
             double result1 = visitor.Result;
 
-            visitor.VisitNode(n2);
+            visitor.VisitNode(n3);
             double result2 = visitor.Result;
 
             Assert.That(result1, Is.Not.EqualTo(result2));
