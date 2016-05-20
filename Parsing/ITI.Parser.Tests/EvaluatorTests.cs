@@ -24,10 +24,37 @@ namespace ITI.Parser.Tests
             Node n = new Analyser().Analyse( new StringTokenizer( text ) );
 
             EvalVisitor visitor = new EvalVisitor();
-            visitor.VisitNode( n );
-            double result = visitor.Result;
-            Assert.That( result, Is.EqualTo( expectedResult ) );
+            var c = (ConstantNode)visitor.VisitNode( n );
+            Assert.That( c.Value, Is.EqualTo( expectedResult ) );
         }
 
+        [TestCase( "3*X + 18", 3.0 * 5 + 18 )]
+        [TestCase( "3*X + (Y*5/X+26540)", 3.0 * 5 + (7 * 5 / 5 + 26540) )]
+        public void with_variables( string text, double expectedResult )
+        {
+            Dictionary<string, double> vars = new Dictionary<string, double>();
+            vars.Add( "X", 5 );
+            vars.Add( "Y", 7 );
+
+            var visitor = new EvalVisitor( vars );
+
+            Node n = new Analyser().Analyse( new StringTokenizer( text ) );
+            var c = (ConstantNode)visitor.VisitNode( n );
+
+            Assert.That( c.Value, Is.EqualTo( expectedResult ) );
+        }
+
+
+        [TestCase( "3*X + 18 + Toto", "(33 + Toto)")]
+        [TestCase( "10*X / Toto", "(50 / Toto)" )]
+        public void partial_evaluation_with_variables( string text, string simplified )
+        {
+            var visitor = new EvalVisitor( name => name == "X" ? 5.0 : (double?)null );
+
+            Node n = new Analyser().Analyse( new StringTokenizer( text ) );
+            var s = visitor.VisitNode( n );
+
+            Assert.That( s.ToString(), Is.EqualTo( simplified ) );
+        }
     }
 }
