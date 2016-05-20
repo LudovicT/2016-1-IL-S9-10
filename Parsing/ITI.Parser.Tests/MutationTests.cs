@@ -24,11 +24,9 @@ namespace ITI.Parser.Tests
             var n3 = mutationVisitor.VisitNode(n2);
 
             EvalVisitor visitor = new EvalVisitor();
-            visitor.VisitNode(n1);
-            double result1 = visitor.Result;
-
-            visitor.VisitNode(n3);
-            double result2 = visitor.Result;
+            double result1 = (visitor.VisitNode(n1) as ConstantNode).Value;
+            
+            double result2 = (visitor.VisitNode(n3) as ConstantNode).Value;
 
             Assert.That(result1, Is.Not.EqualTo(result2));
         }

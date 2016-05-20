@@ -44,8 +44,8 @@ namespace ITI.Parser.Tests
             {
                 dic.Add("A", value[0]);
                 dic.Add("B", value[1]);
-                evalVisitor.EvalWithVariable(n, dic);
-                fitness -= Math.Abs(value[2] - evalVisitor.Result);
+                var result = evalVisitor.EvalWithVariable(n, dic); 
+                fitness -= Math.Abs(value[2] - ((ConstantNode)result).Value);
                 dic.Clear();
             }
             

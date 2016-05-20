@@ -10,10 +10,10 @@ namespace ITI.Parser
     {
         private Dictionary<string, double> _values;
 
-        public void EvalWithVariable(Node n, Dictionary<string, double> values)
+        public Node EvalWithVariable(Node n, Dictionary<string, double> values)
         {
             _values = values;
-            VisitNode(n);
+            return VisitNode(n);
         }
 
         public override Node Visit(IfNode n)
@@ -43,10 +43,10 @@ namespace ITI.Parser
             {
                 switch (n.OperatorType)
                 {
-                    case TokenType.Mult: return new ConstantNode(((ConstantNode)n.Left).Value * ((ConstantNode)n.Right).Value);
-                    case TokenType.Div: return new ConstantNode(((ConstantNode)n.Left).Value / ((ConstantNode)n.Right).Value);
-                    case TokenType.Plus: return new ConstantNode(((ConstantNode)n.Left).Value + ((ConstantNode)n.Right).Value);
-                    case TokenType.Minus: return new ConstantNode(((ConstantNode)n.Left).Value - ((ConstantNode)n.Right).Value);
+                    case TokenType.Mult: return new ConstantNode(((ConstantNode)left).Value * ((ConstantNode)right).Value);
+                    case TokenType.Div: return new ConstantNode(((ConstantNode)left).Value / ((ConstantNode)right).Value);
+                    case TokenType.Plus: return new ConstantNode(((ConstantNode)left).Value + ((ConstantNode)right).Value);
+                    case TokenType.Minus: return new ConstantNode(((ConstantNode)left).Value - ((ConstantNode)right).Value);
                 }
             }
 
@@ -70,7 +70,6 @@ namespace ITI.Parser
 
         public override Node Visit(ConstantNode n)
         {
-            _isConstant = true;
             return n;
         }
 
@@ -79,7 +78,6 @@ namespace ITI.Parser
             double value;
             if (_values.TryGetValue(n.Name, out value))
             {
-                _isConstant = true;
                 return new ConstantNode(_values[n.Name]);
             }
             return n;

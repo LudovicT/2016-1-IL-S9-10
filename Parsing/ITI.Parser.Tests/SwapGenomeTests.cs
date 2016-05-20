@@ -25,10 +25,11 @@ namespace ITI.Parser.Tests
 
             EvalVisitor visitor = new EvalVisitor();
             visitor.VisitNode(n2);
-            double result = visitor.Result;
+            double result = (visitor.VisitNode(n) as ConstantNode).Value;
             visitor.VisitNode(n3);
-            double resultBase = visitor.Result;
-            Assert.That(result, Is.Not.EqualTo(resultBase));
+            double resultBase = (visitor.VisitNode(n) as ConstantNode).Value;
+            
+            Assert.That(result, Is.EqualTo(resultBase));
         }
     }
 }

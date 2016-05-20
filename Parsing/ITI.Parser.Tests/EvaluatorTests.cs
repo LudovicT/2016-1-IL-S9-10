@@ -23,8 +23,7 @@ namespace ITI.Parser.Tests
             Node n = new Analyser().Analyse(new StringTokenizer(text));
 
             EvalVisitor visitor = new EvalVisitor();
-            visitor.VisitNode(n);
-            double result = visitor.Result;
+            var result = (visitor.VisitNode(n) as ConstantNode).Value;
             Assert.That(result, Is.EqualTo(expectedResult));
         }
     }
