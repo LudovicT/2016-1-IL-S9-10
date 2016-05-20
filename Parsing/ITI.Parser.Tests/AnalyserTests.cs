@@ -50,6 +50,14 @@ namespace ITI.Parser.Tests
             var node = a.Analyse( new StringTokenizer( "12*-7" ) );
             Assert.That( node.ToString(), Is.EqualTo( "(12 * -(7))" ) );
         }
-        
+
+        [Test]
+        public void with_variables()
+        {
+            var a = new Analyser();
+            var node = a.Analyse( new StringTokenizer( "12*-X+9" ) );
+            Assert.That( node.ToString(), Is.EqualTo( "((12 * -(X)) + 9)" ) );
+        }
+
     }
 }
