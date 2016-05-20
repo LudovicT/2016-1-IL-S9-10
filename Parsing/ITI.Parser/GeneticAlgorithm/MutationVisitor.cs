@@ -19,6 +19,16 @@ namespace ITI.Parser
         private int _maxCount;
         private int _maxDepth;
         private bool _hasMutation;
+        private double _pureRandomMutationChance;
+
+        private bool ShouldMutate
+        {
+            get
+            {
+                return _mutationPlace == _currentExplorationCount
+                    || _random.NextDouble() < _pureRandomMutationChance;
+            }
+        }
 
         public MutationVisitor(double mutationRate = 0.05, int maxDepth = 50, int maxSize = 500, int? seed = 7)
         {
@@ -46,7 +56,7 @@ namespace ITI.Parser
         {
             if (!_hasMutation || _mutationPlace < _currentExplorationCount) return;
             Explore(n);
-            if (_mutationPlace == _currentExplorationCount)
+            if (ShouldMutate)
             {
                 MutateBinaryNode(n);
             }
@@ -58,7 +68,7 @@ namespace ITI.Parser
         {
             if (!_hasMutation || _mutationPlace < _currentExplorationCount) return;
             Explore(n);
-            if (_mutationPlace == _currentExplorationCount)
+            if (ShouldMutate)
             {
                 MutateConstantNode(n);
             }
@@ -68,7 +78,7 @@ namespace ITI.Parser
         {
             if (!_hasMutation || _mutationPlace < _currentExplorationCount) return;
             Explore(n);
-            if (_mutationPlace == _currentExplorationCount)
+            if (ShouldMutate)
             {
                 MutateIfNode(n);
             }
@@ -81,16 +91,17 @@ namespace ITI.Parser
         {
             if (!_hasMutation || _mutationPlace < _currentExplorationCount) return;
             Explore(n);
-            if (_mutationPlace == _currentExplorationCount)
+            if (ShouldMutate)
             {
                 MutateUnaryNode(n);
             }
             VisitNode(n.Right);
         }
 
-        public void Reset()
+        private void Reset()
         {
             _hasMutation = _random.NextDouble() <= _mutationRate;
+            _pureRandomMutationChance = _hasMutation ? _random.NextDouble() : 0;
             _maxExplorationCount = 0;
             _currentExplorationCount = 0;
             _rootNode = null;

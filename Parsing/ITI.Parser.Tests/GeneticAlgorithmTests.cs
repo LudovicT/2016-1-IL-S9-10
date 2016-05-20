@@ -17,18 +17,20 @@ namespace ITI.Parser.Tests
         [SetUp]
         public void Startup()
         {
-            _values.Add(new[] { 1, 8, 300 });
-            _values.Add(new[] { 2, 7, 500 });
-            _values.Add(new[] { 3, 6, 700 });
-            _values.Add(new[] { 4, 5, 900 });
-            _values.Add(new[] { 5, 4, 1100 });
-            _values.Add(new[] { 6, 3, 1300 });
+            _values.Add(new[] { 6, 6, 100012 });
+            _values.Add(new[] { 1, 1, 100002 });
+            _values.Add(new[] { 2, 2, 100004 });
+            _values.Add(new[] { 3, 3, 100006 });
+            _values.Add(new[] { 4, 4, 100008 });
+            _values.Add(new[] { 5, 5, 100010 });
         }
 
         [Test]
         public void best_fitness_level()
         {
-            GeneticAlgorithm GA = new GeneticAlgorithm(0.1, 1, 1000, 5000, 8, 100, 10, test_function);
+            GeneticAlgorithm GA = new GeneticAlgorithm(0.25, 0.1, 500, 5000, 10, 1000, 42, test_function);
+            GA.Elitism = true;
+            GA.ReverseComparison = true;
             var bestByGeneration = GA.Run();
         }
 

@@ -39,31 +39,28 @@ namespace ITI.Parser
 
             Node n;
 
-            do
+            int kind = _random.Next(4);
+            switch (kind)
             {
-                int kind = _random.Next(4);
-                switch (kind)
-                {
-                    case 0:
-                        n = RandomBinaryNode(maxDepth - 1, maxSize - 1);
-                        break;
+                case 0:
+                    n = RandomBinaryNode(maxDepth - 1, maxSize - 1);
+                    break;
 
-                    case 1:
-                        n = RandomConstantNode();
-                        break;
+                case 1:
+                    n = RandomConstantNode();
+                    break;
 
-                    case 2:
-                        n = RandomUnaryNode(maxDepth - 1, maxSize - 1);
-                        break;
+                case 2:
+                    n = RandomUnaryNode(maxDepth - 1, maxSize - 1);
+                    break;
 
-                    case 3:
-                        n = MaxVariable == 0 ? RandomConstantNode() : RandomVariableNode();
-                        break;
+                case 3:
+                    n = MaxVariable == 0 ? RandomConstantNode() : RandomVariableNode();
+                    break;
 
-                    default:
-                        throw new InvalidOperationException("Invalid node creation.");
-                }
-            } while (n.Depth > maxDepth || n.Count > maxSize);
+                default:
+                    throw new InvalidOperationException("Invalid node creation.");
+            }
 
             return n;
         }
@@ -80,7 +77,7 @@ namespace ITI.Parser
 
         public ConstantNode RandomConstantNode()
         {
-            return new ConstantNode(Math.Floor(_random.NextDouble() * 50));
+            return new ConstantNode(_random.Next(1,101));
         }
 
         private Node RandomVariableNode()

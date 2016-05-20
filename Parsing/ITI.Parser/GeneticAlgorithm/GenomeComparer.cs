@@ -9,17 +9,27 @@ namespace ITI.Parser
 {
     public class GenomeComparer : IComparer<Node>
     {
+        bool _reverse;
+        public GenomeComparer(bool reverse)
+        {
+            _reverse = reverse;
+        }
+
         public int Compare(Node x, Node y)
         {
-            if (x == null)
+            var a = _reverse ? y : x;
+            var b = _reverse ? x : y;
+
+            if (a == null)
             {
-                if (y == null)
+                if (b == null)
                 {
                     return 0;
                 }
                 return -1;
             }
-            return x.Fitness.CompareTo(y.Fitness);
+
+            return a.Fitness.CompareTo(b.Fitness);
         }
     }
 }

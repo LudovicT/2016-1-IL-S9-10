@@ -28,6 +28,8 @@ namespace ITI.Parser
 
         public Node BestNode { get; private set; }
         public Func<Node, double> FitnessFunction { get; set; }
+        public bool Elitism { get; set; }
+        public bool ReverseComparison { get; set; }
 
         public GeneticAlgorithm(double crossoverRate, double mutationRate, int populationSize, double maxGeneration, int maxGenomeDepth, int maxGenomeSize, int seed, Func<Node, double> fitnessFunction = null)
         {
@@ -45,6 +47,8 @@ namespace ITI.Parser
             _creator = new NodeCreator(_random, 2);
             _variableSetVisitor = new VariableSetVisitor();
             FitnessFunction = fitnessFunction;
+            Elitism = false;
+            ReverseComparison = false;
         }
 
         public List<Node> Run(int maxBestResult = 10)
@@ -117,7 +121,8 @@ namespace ITI.Parser
                 child = nbTry % 2 == 0
                     ? _swapper.SwapGenome(parent1, parent2, first, second)
                     : _swapper.SwapGenome(parent2, parent1, second, first);
-                nbTry++; if (nbTry > 250)
+                nbTry++;
+                if (nbTry > 250)
                 {
                     child = _creator.RandomNode(MaxGenomeDepth, MaxGenomeSize);
                 }
@@ -144,11 +149,11 @@ namespace ITI.Parser
 
             while (idx == -1 && first <= last)
             {
-                if (randomFitness < _fitnessList[mid])
+                if (ReverseComparison ? randomFitness > _fitnessList[mid] : randomFitness < _fitnessList[mid])
                 {
                     last = mid;
                 }
-                else if (randomFitness > _fitnessList[mid])
+                else if (ReverseComparison ? randomFitness < _fitnessList[mid] : randomFitness > _fitnessList[mid])
                 {
                     first = mid;
                 }
@@ -165,18 +170,15 @@ namespace ITI.Parser
         {
             _totalFitness = 0;
             _currentGeneration.ForEach(x => x.Fitness = FitnessFunction(x));
-            _totalFitness = _currentGeneration.Where(x => !double.IsNaN(x.Fitness) && !double.IsInfinity(x.Fitness)).Sum(x => x.Fitness + int.MaxValue);
-            _currentGeneration.Sort(new GenomeComparer());
+            _totalFitness = _currentGeneration.Where(x => !double.IsNaN(x.Fitness) && !double.IsInfinity(x.Fitness)).Sum(x => x.Fitness);
+            _currentGeneration.Sort(new GenomeComparer(false));
 
             double fitness = 0.0;
             _fitnessList.Clear();
-            EvalVisitor evalVisitor = new EvalVisitor();
+
             foreach (var genome in _currentGeneration)
             {
-                _variableSetVisitor.SetVariable(genome, "A", 1);
-                _variableSetVisitor.SetVariable(genome, "B", 2);
-                evalVisitor.VisitNode(genome);
-                fitness += double.IsNaN(genome.Fitness) || double.IsInfinity(genome.Fitness) ? 0 : genome.Fitness + int.MaxValue;
+                fitness += double.IsNaN(genome.Fitness) || double.IsInfinity(genome.Fitness) ? 0 : genome.Fitness;
                 _fitnessList.Add(fitness);
             }
         }
@@ -211,31 +213,31 @@ namespace ITI.Parser
                 Node child2Backup = new Analyser().Analyse(new StringTokenizer(child2.ToString()));
                 do
                 {
-                    child1 = child1Backup;
+                    child1 = new Analyser().Analyse(new StringTokenizer(child1Backup.ToString()));
                     _mutationVisitor.Mutate(ref child1);
                     nbTry++;
                 } while (nbTry < maxTry && (!NodeContainsVariable(child1, "A") || !NodeContainsVariable(child1, "B")));
                 if (nbTry == maxTry)
                 {
-                    child1 = child1Backup;
+                    child1 = new Analyser().Analyse(new StringTokenizer(child1Backup.ToString()));
                 }
 
                 nbTry = 0;
                 do
                 {
-                    child2 = child2Backup;
+                    child2 = new Analyser().Analyse(new StringTokenizer(child2Backup.ToString()));
                     _mutationVisitor.Mutate(ref child2);
                     nbTry++;
                 } while (nbTry < maxTry && (!NodeContainsVariable(child2, "A") || !NodeContainsVariable(child2, "B")));
                 if (nbTry == maxTry)
                 {
-                    child2 = child2Backup;
+                    child2 = new Analyser().Analyse(new StringTokenizer(child2Backup.ToString()));
                 }
 
                 nextGeneration.Add(child1);
                 nextGeneration.Add(child2);
             }
-            if (g != null)
+            if (Elitism && g != null)
             {
                 nextGeneration[0] = g;
             }
