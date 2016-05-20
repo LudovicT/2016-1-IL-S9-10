@@ -29,6 +29,19 @@ namespace ITI.Parser
                 return -1;
             }
 
+            if ((double.IsInfinity(a.Fitness) || double.IsNaN(a.Fitness)) && (double.IsInfinity(b.Fitness) || double.IsNaN(b.Fitness)))
+            {
+                return 0;
+            }
+            if (double.IsInfinity(a.Fitness) || double.IsNaN(a.Fitness))
+            {
+                return -1;
+            }
+            if (double.IsInfinity(b.Fitness) || double.IsNaN(b.Fitness))
+            {
+                return 1;
+            }
+
             return a.Fitness.CompareTo(b.Fitness);
         }
     }

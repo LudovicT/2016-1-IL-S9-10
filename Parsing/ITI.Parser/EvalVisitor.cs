@@ -8,7 +8,12 @@ namespace ITI.Parser
 {
     public class EvalVisitor : NodeVisitor
     {
-        private Dictionary<string, double> _values;
+        private Dictionary<string, double> _values = new Dictionary<string, double>();
+
+        public EvalVisitor()
+        {
+
+        }
 
         public Node EvalWithVariable(Node n, Dictionary<string, double> values)
         {

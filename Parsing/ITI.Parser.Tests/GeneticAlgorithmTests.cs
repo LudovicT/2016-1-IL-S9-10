@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,9 +12,6 @@ namespace ITI.Parser.Tests
     public class GeneticAlgorithmTests
     {
         public List<int[]> _values = new List<int[]>();
-        private VariableVisitor variableVisitor = new VariableVisitor();
-        private EvalVisitor evalVisitor = new EvalVisitor();
-        Dictionary<string, double> dic = new Dictionary<string, double>();
 
         [SetUp]
         public void Startup()
@@ -29,27 +27,31 @@ namespace ITI.Parser.Tests
         [Test]
         public void best_fitness_level()
         {
-            GeneticAlgorithm GA = new GeneticAlgorithm(0.25, 0.1, 500, 5000, 10, 1000, 42, test_function);
+            GeneticAlgorithm GA = new GeneticAlgorithm(0.25, 0.5, 100, 50000, 10, 50, 7, test_function);
             GA.Elitism = true;
-            GA.ReverseComparison = true;
+            GA.ReverseComparison = false;
             var bestByGeneration = GA.Run();
         }
 
         private double test_function(GeneticAlgorithm origin, Node n)
         {
+            Dictionary<string, double> dic = new Dictionary<string, double>();
+            EvalVisitor evalVisitor = new EvalVisitor();
             double fitness = 0;
-            n.Fitness -= n.Count*.1;
-            n.Fitness -= n.Depth * 0.5;
+            if (n.Count > 50)
+                n.Fitness -= n.Count * 5;
+            if (n.Depth > 8)
+                n.Fitness -= n.Depth * 50;
             foreach (var value in _values)
             {
                 dic.Add("A", value[0]);
                 dic.Add("B", value[1]);
-                var result = evalVisitor.EvalWithVariable(n, dic); 
+                var result = evalVisitor.EvalWithVariable(n, dic);
                 fitness -= Math.Abs(value[2] - ((ConstantNode)result).Value);
                 dic.Clear();
             }
-            
-            return double.IsNaN(fitness) || double.IsInfinity(fitness) ? fitness : fitness == 0 ?  0 : 1d/fitness;
+
+            return double.IsNaN(fitness) || double.IsInfinity(fitness) ? int.MinValue : fitness;
         }
     }
 }

@@ -25,6 +25,7 @@ namespace ITI.Parser
         private readonly List<double> _fitnessList;
         private double _totalFitness;
         private VariableVisitor _variableSetVisitor;
+        private EvalVisitor _evalVisitor = new EvalVisitor();
 
         public Node BestNode { get; private set; }
         public Func<GeneticAlgorithm, Node, double> FitnessFunction { get; set; }
@@ -147,7 +148,11 @@ namespace ITI.Parser
         private void RankPopulation()
         {
             _totalFitness = 0;
-            _currentGeneration.ForEach(x => x.Fitness = FitnessFunction(this, x));
+            //var formatedCurrentGen = _currentGeneration.Select(x => _evalVisitor.VisitNode(x)).ToList();
+            //_currentGeneration.Clear();
+            //_currentGeneration.AddRange(formatedCurrentGen);
+            Parallel.ForEach(_currentGeneration, x => x.Fitness = FitnessFunction(this, x));
+            //_currentGeneration.ForEach(x => x.Fitness = FitnessFunction(this, x));
             _totalFitness = _currentGeneration.Where(x => !double.IsNaN(x.Fitness) && !double.IsInfinity(x.Fitness)).Sum(x => x.Fitness);
             _currentGeneration.Sort(new GenomeComparer(ReverseComparison));
 
@@ -191,6 +196,7 @@ namespace ITI.Parser
                 nextGeneration.Add(child1);
                 nextGeneration.Add(child2);
             }
+
             if (Elitism && g != null)
             {
                 nextGeneration[0] = g;
