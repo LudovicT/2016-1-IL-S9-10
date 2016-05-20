@@ -19,95 +19,46 @@ namespace ITI.Parser
         private int _maxCount;
         private int _maxDepth;
         private bool _hasMutation;
-        private double _pureRandomMutationChance;
+        private Node _node;
+        private bool HasMutation { get { return _random.NextDouble() <= _mutationRate; } }
 
-        private bool ShouldMutate
+        public MutationVisitor(NodeCreator nodeCreator, double mutationRate = 0.05, int maxDepth = 50, int maxSize = 500, int? seed = 7)
         {
-            get
-            {
-                return _mutationPlace == _currentExplorationCount
-                    || _random.NextDouble() < _pureRandomMutationChance;
-            }
+            Init(nodeCreator, mutationRate, maxDepth, maxSize, seed);
         }
 
-        public MutationVisitor(NodeCreator nodeCreator, double mutationRate = 0.05, int maxDepth = 50, int maxSize = 500,  int? seed = 7)
+        public override Node Visit(BinaryNode n)
         {
-            Init(mutationRate, maxDepth, maxSize, seed, nodeCreator);
+            return TryMutate(n);
         }
 
-        public void Mutate(ref Node n)
+        public override Node Visit(ConstantNode n)
         {
-            Reset();
-            _rootNode = n;
-            _maxExplorationCount = n.Count;
-            if (_hasMutation)
-            {
-                _mutationPlace = _random.Next(0, _maxExplorationCount);
-                if (_mutationPlace == _currentExplorationCount)
-                {
-                    n = _nodeCreator.RandomNode(_maxDepth, _maxCount);
-                    return;
-                }
-            }
-            VisitNode(n);
+            return TryMutate(n);
         }
 
-        public override void Visit(BinaryNode n)
+        public override Node Visit(IfNode n)
         {
-            if (!_hasMutation || _mutationPlace < _currentExplorationCount) return;
-            Explore(n);
-            if (ShouldMutate)
-            {
-                MutateBinaryNode(n);
-            }
-            VisitNode(n.Left);
-            VisitNode(n.Right);
+            return TryMutate(n);
         }
 
-        public override void Visit(ConstantNode n)
+        public override Node Visit(UnaryNode n)
         {
-            if (!_hasMutation || _mutationPlace < _currentExplorationCount) return;
-            Explore(n);
-            if (ShouldMutate)
-            {
-                MutateConstantNode(n);
-            }
+            return TryMutate(n);
         }
 
-        public override void Visit(IfNode n)
+        public override Node Visit(VariableNode n)
         {
-            if (!_hasMutation || _mutationPlace < _currentExplorationCount) return;
-            Explore(n);
-            if (ShouldMutate)
-            {
-                MutateIfNode(n);
-            }
-            VisitNode(n.Condition);
-            VisitNode(n.WhenTrue);
-            VisitNode(n.WhenFalse);
+            return TryMutate(n);
         }
 
-        public override void Visit(UnaryNode n)
+        public void Reset()
         {
-            if (!_hasMutation || _mutationPlace < _currentExplorationCount) return;
-            Explore(n);
-            if (ShouldMutate)
-            {
-                MutateUnaryNode(n);
-            }
-            VisitNode(n.Right);
-        }
 
-        private void Reset()
-        {
-            _hasMutation = _random.NextDouble() <= _mutationRate;
-            _pureRandomMutationChance = _hasMutation ? _random.NextDouble() : 0;
-            _maxExplorationCount = 0;
-            _currentExplorationCount = 0;
             _rootNode = null;
         }
 
-        private void Init(double mutationRate, int maxDepth, int maxCount, int? seed, NodeCreator nodeCreator)
+        private void Init(NodeCreator nodeCreator, double mutationRate, int maxDepth, int maxCount, int? seed)
         {
             _mutationRate = mutationRate;
             _maxCount = maxCount;
@@ -117,79 +68,16 @@ namespace ITI.Parser
             _nodeCreator = nodeCreator;
         }
 
-        private void Explore(Node n)
+        private Node TryMutate(Node n)
         {
-            _currentExplorationCount++;
-        }
-
-        private void MutateBinaryNode(BinaryNode n)
-        {
-            if (PossibleDepth(n) < 1 || PossibleCount(n) < 1) return;
-            int kind = _random.Next(3);
-            switch (kind)
+            if (PossibleDepth(n) < 1 || PossibleCount(n) < 1)
             {
-                case 0:
-                    n.OperatorType = _nodeCreator.RandomBinaryNodeOperator();
-                    break;
-
-                case 1:
-                    n.Left = _nodeCreator.RandomNode(PossibleDepth(n), PossibleCount(n));
-                    break;
-
-                case 2:
-                    n.Right = _nodeCreator.RandomNode(PossibleDepth(n), PossibleCount(n));
-                    break;
-
-                default:
-                    throw new InvalidOperationException("Not the right kind");
+                return n;
             }
-        }
 
-        private void MutateConstantNode(ConstantNode n)
-        {
-            n.Value = _nodeCreator.RandomConstantNode().Value;
-        }
-
-        private void MutateIfNode(IfNode n)
-        {
-            if (PossibleDepth(n) < 1 || PossibleCount(n) < 1) return;
-            int kind = _random.Next(3);
-            switch (kind)
-            {
-                case 0:
-                    n.Condition = _nodeCreator.RandomNode(PossibleDepth(n), PossibleCount(n));
-                    break;
-
-                case 1:
-                    n.WhenTrue = _nodeCreator.RandomNode(PossibleDepth(n), PossibleCount(n));
-                    break;
-
-                case 2:
-                    n.WhenFalse = _nodeCreator.RandomNode(PossibleDepth(n), PossibleCount(n));
-                    break;
-
-                default:
-                    throw new InvalidOperationException("Not the right kind");
-            }
-        }
-
-        private void MutateUnaryNode(UnaryNode n)
-        {
-            if (PossibleDepth(n) < 1 || PossibleCount(n) < 1) return;
-            int kind = _random.Next(2);
-            switch (kind)
-            {
-                case 0:
-                    n.OperatorType = _nodeCreator.RandomUnaryNodeOperator();
-                    break;
-
-                case 1:
-                    n.Right = _nodeCreator.RandomNode(PossibleDepth(n), PossibleCount(n));
-                    break;
-
-                default:
-                    throw new InvalidOperationException("Not the right kind");
-            }
+            return HasMutation 
+                ? _nodeCreator.RandomNode(PossibleDepth(n), PossibleCount(n)) 
+                : n;
         }
 
         private int PossibleDepth(Node n)

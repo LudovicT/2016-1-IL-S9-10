@@ -24,7 +24,7 @@ namespace ITI.Parser
         public override int Depth => Math.Max(Math.Max(Condition.Depth, WhenTrue.Depth), WhenFalse.Depth) + 1;
 
         [DebuggerStepThrough]
-        internal override void Accept(NodeVisitor visitor) => visitor.Visit(this);
+        internal override Node Accept(NodeVisitor visitor) => visitor.Visit(this);
 
         public override string ToString()
         {

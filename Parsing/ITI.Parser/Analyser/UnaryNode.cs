@@ -21,7 +21,7 @@ namespace ITI.Parser
         public Node Right { get; internal set; }
 
         [DebuggerStepThrough]
-        internal override void Accept(NodeVisitor visitor) => visitor.Visit(this);
+        internal override Node Accept(NodeVisitor visitor) => visitor.Visit(this);
 
         public override int Count => Right.Count + 1;
         public override int Depth => Right.Depth + 1;

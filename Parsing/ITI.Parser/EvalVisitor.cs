@@ -43,7 +43,7 @@ namespace ITI.Parser
         public override void Visit(UnaryNode n)
         {
             VisitNode(n.Right);
-            _currentValue = -_currentValue;
+            _currentValue = n.OperatorType == TokenType.Minus ? -_currentValue : _currentValue;
         }
 
         public override void Visit(ConstantNode n)

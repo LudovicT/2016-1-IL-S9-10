@@ -8,39 +8,52 @@ namespace ITI.Parser
 {
     public abstract class NodeVisitor
     {
-        public void VisitNode(Node n)
+        public Node VisitNode(Node n)
         {
             n.Accept(this);
+            return n;
         }
 
-        public virtual void Visit(BinaryNode n)
+        public virtual Node Visit(BinaryNode n)
         {
-            VisitNode(n.Left);
-            VisitNode(n.Right);
+            var left = VisitNode(n.Left);
+            var right = VisitNode(n.Right);
+            return left != n.Left || right != n.Right
+                ? new BinaryNode(n.OperatorType, left, right)
+                : n;
         }
 
-        public virtual void Visit(ConstantNode n)
+        public virtual Node Visit(ConstantNode n)
         {
+            return n;
         }
 
-        public virtual void Visit(VariableNode n)
+        public virtual Node Visit(VariableNode n)
         {
+            return n;
         }
 
-        public virtual void Visit(ErrorNode n)
+        public virtual Node Visit(ErrorNode n)
         {
+            return n;
         }
 
-        public virtual void Visit(IfNode n)
+        public virtual Node Visit(IfNode n)
         {
-            VisitNode(n.Condition);
-            VisitNode(n.WhenTrue);
-            VisitNode(n.WhenFalse);
+            var condition = VisitNode(n.Condition);
+            var whenTrue = VisitNode(n.WhenTrue);
+            var whenFalse = VisitNode(n.WhenFalse);
+            return condition!= n.Condition || whenTrue != n.WhenTrue || whenFalse != n.WhenFalse
+                ? new IfNode(condition,whenTrue,whenFalse):
+                n;
         }
 
-        public virtual void Visit(UnaryNode n)
+        public virtual Node Visit(UnaryNode n)
         {
-            VisitNode(n.Right);
+            var right = VisitNode(n.Right);
+            return right != n.Right
+                ? new UnaryNode(n.OperatorType, right)
+                : n;
         }
     }
 }

@@ -19,12 +19,13 @@ namespace ITI.Parser
             VisitNode(n);
         }
 
-        public override void Visit(VariableNode n)
+        public override Node Visit(VariableNode n)
         {
             if (n.Name == _variableName)
             {
                 VariableOccurence++;
             }
+            return n;
         }
     }
 }
