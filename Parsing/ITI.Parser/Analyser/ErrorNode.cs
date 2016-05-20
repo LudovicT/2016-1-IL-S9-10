@@ -14,7 +14,7 @@ namespace ITI.Parser
             Message = message;
         }
 
-        public string Message { get; private set; }
+        public string Message { get; }
 
         [DebuggerStepThrough]
         internal override Node Accept( NodeVisitor visitor ) => visitor.Visit( this );

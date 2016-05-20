@@ -22,6 +22,7 @@ namespace ITI.Parser
         EndOfInput = 64,
         QuestionMark = 128,
         Colon = 256,
-        Error = 512
+        Identifier = 512,
+        Error = 1024
     }
 }

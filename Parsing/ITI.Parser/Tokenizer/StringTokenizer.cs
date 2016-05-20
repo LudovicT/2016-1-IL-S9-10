@@ -14,6 +14,8 @@ namespace ITI.Parser
         int _maxPos;
         TokenType _curToken;
         double _doubleValue;
+        string _identifierValue;
+        StringBuilder _buffer;
 
         public StringTokenizer( string s )
             : this( s, 0, s.Length )
@@ -31,6 +33,7 @@ namespace ITI.Parser
             _toParse = s;
             _pos = startIndex;
             _maxPos = startIndex + count;
+            _buffer = new StringBuilder();
         }
 
         #region Input reader
@@ -111,6 +114,28 @@ namespace ITI.Parser
             return false;
         }
 
+        public bool Match( string identifier )
+        {
+            if( _curToken == TokenType.Identifier && _identifierValue == identifier)
+            {
+                GetNextToken();
+                return true;
+            }
+            return false;
+        }
+
+        public bool Match( out string identifier )
+        {
+            if( _curToken == TokenType.Identifier )
+            {
+                identifier = _identifierValue;
+                GetNextToken();
+                return true;
+            }
+            identifier = null;
+            return false;
+        }
+
         public TokenType GetNextToken()
         {
             if( IsEnd ) return _curToken = TokenType.EndOfInput;
@@ -132,7 +157,7 @@ namespace ITI.Parser
                 case ')': _curToken = TokenType.ClosePar; break;
                 default:
                     {
-                        if( Char.IsDigit( c ) )
+                        if( char.IsDigit( c ) )
                         {
                             _curToken = TokenType.Number;
                             double val = (int)(c - '0');
@@ -142,6 +167,18 @@ namespace ITI.Parser
                                 Forward();
                             }
                             _doubleValue = val;
+                        }
+                        else if( char.IsLetter( c ) || c == '_' )
+                        {
+                            _curToken = TokenType.Identifier;
+                            _buffer.Clear();
+                            _buffer.Append( c );
+                            while( !IsEnd && (char.IsLetter( c = Peek() ) || c == '_') )
+                            {
+                                _buffer.Append( c );
+                                Forward();
+                            }
+                            _identifierValue = _buffer.ToString();
                         }
                         else _curToken = TokenType.Error;
                         break;
