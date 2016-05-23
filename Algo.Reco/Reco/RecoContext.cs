@@ -79,12 +79,21 @@ namespace Algo
                     return distance;
                 }
 
-                double r1 = commonMoviesList.Sum(x => x.R1);
-                double r2 = commonMoviesList.Sum(x => x.R2);
-                double r1Pow = commonMoviesList.Sum(x => Math.Pow(x.R1, 2));
-                double r2Pow = commonMoviesList.Sum(x => Math.Pow(x.R2, 2));
-                double r1r2 = commonMoviesList.Sum(x => x.R1 * x.R2);
+                double r1 = 0;
+                double r2 = 0;
+                double r1Pow = 0;
+                double r2Pow = 0;
+                double r1r2 = 0;
                 int n = commonMoviesList.Count;
+
+                commonMoviesList.ForEach(x =>
+                {
+                    r1 += x.R1;
+                    r2 += x.R2;
+                    r1Pow += Math.Pow(x.R1, 2);
+                    r2Pow += Math.Pow(x.R2, 2);
+                    r1r2 += x.R1 * x.R2;
+                });
 
                 return (r1r2 - (r1 * r2) / n)
                     / Math.Sqrt((r1Pow - Math.Pow(r1, 2) / n) * (r2Pow - Math.Pow(r2, 2) / n));
