@@ -5,6 +5,8 @@ using System.Text;
 using NUnit.Framework;
 using System.IO;
 using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
 namespace Algo.Tests
 {
@@ -119,10 +121,15 @@ namespace Algo.Tests
             c.LoadFrom(_goodDataPath);
             double d = c.Distance(c.Users[3], c.Users[4836]);
             var users = c.Users.ToList();
-            users.ForEach(x => users.ForEach(y =>
+
+            var us1 = Partitioner.Create(users);
+            var us2 = Partitioner.Create(users);
+
+            List<string> values = new List<string>();
+            Parallel.ForEach(us1, x => Parallel.ForEach(us2, y =>
             {
                 double dist = c.Distance(x, y);
-                Console.WriteLine($"{x.UserID} & {y.UserID} : {dist}");
+                values.Add($"{x.UserID} & {y.UserID} : {dist}");
             }));
         }
     }

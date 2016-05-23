@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Collections.Concurrent;
 
 namespace Algo
 {
@@ -20,7 +21,7 @@ namespace Algo
 
         public RecoContext()
         {
-            _cacheDistance = new Dictionary<TwoUserKey, double>();
+            _cacheDistance = new ConcurrentDictionary<TwoUserKey, double>();
         }
 
         struct TwoUserKey : IEquatable<TwoUserKey>
@@ -49,7 +50,7 @@ namespace Algo
             public override int GetHashCode() => U1.GetHashCode() ^ U2.GetHashCode();
         }
 
-        Dictionary<TwoUserKey, double> _cacheDistance;
+        ConcurrentDictionary<TwoUserKey, double> _cacheDistance;
 
         public double Distance(User u1, User u2)
         {
@@ -69,13 +70,15 @@ namespace Algo
                                                     R1 = u1R.Value,
                                                     R2 = u2R.Value
                                                 });
+
+            double distance = 0;
             if (commonMovies.Any())
             {
                 var commonMoviesList = commonMovies.ToList();
                 if (commonMoviesList.Count == 1)
                 {
-                    double distance = 1 / (1 + Math.Sqrt(commonMoviesList.Sum(x => Math.Pow(x.R1 - x.R2, 2))));
-                    _cacheDistance.Add(key, distance);
+                    distance = 1 / (1 + Math.Sqrt(commonMoviesList.Sum(x => Math.Pow(x.R1 - x.R2, 2))));
+                    _cacheDistance.TryAdd(key, distance);
                     return distance;
                 }
 
@@ -90,15 +93,36 @@ namespace Algo
                 {
                     r1 += x.R1;
                     r2 += x.R2;
-                    r1Pow += Math.Pow(x.R1, 2);
-                    r2Pow += Math.Pow(x.R2, 2);
+                    r1Pow += x.R1 * x.R1;
+                    r2Pow += x.R2 * x.R2;
                     r1r2 += x.R1 * x.R2;
                 });
 
-                return (r1r2 - (r1 * r2) / n)
-                    / Math.Sqrt((r1Pow - Math.Pow(r1, 2) / n) * (r2Pow - Math.Pow(r2, 2) / n));
+                double r1Coeff = (r1Pow - (r1 * r1) / n);
+                double r2Coeff = (r2Pow - (r2 * r2) / n);
+
+                if (r1Coeff == 0 || r2Coeff == 0)
+                {
+                    if (r1Coeff == r2Coeff)
+                    {
+                        distance = 1;
+                        _cacheDistance.TryAdd(key, distance);
+                        return distance;
+                    }
+                    distance = 1 / (1 + Math.Sqrt(commonMoviesList.Sum(x => Math.Pow(x.R1 - x.R2, 2))));
+                    _cacheDistance.TryAdd(key, distance);
+                    return distance;
+                }
+
+                distance = (r1r2 - (r1 * r2) / n)
+                    / Math.Sqrt(r1Coeff * r2Coeff);
+
+                _cacheDistance.TryAdd(key, distance);
+                return distance;
             }
 
+            distance = -1.0;
+            _cacheDistance.TryAdd(key, distance);
             return -1.0;
 
         }
