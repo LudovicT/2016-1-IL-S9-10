@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using System.IO;
+using System.Diagnostics;
 
 namespace Algo.Tests
 {
@@ -18,39 +19,39 @@ namespace Algo.Tests
         {
             Dictionary<int, Movie> firstMovies;
             Dictionary<int, List<Movie>> duplicateMovies;
-            Movie.ReadMovies( Path.Combine( _badDataPath, "movies.dat" ), out firstMovies, out duplicateMovies );
+            Movie.ReadMovies(Path.Combine(_badDataPath, "movies.dat"), out firstMovies, out duplicateMovies);
             int idMovieMin = firstMovies.Keys.Min();
             int idMovieMax = firstMovies.Keys.Max();
-            Console.WriteLine( "{3} Movies from {0} to {1}, {2} duplicates.", idMovieMin, idMovieMax, duplicateMovies.Count, firstMovies.Count ); 
+            Console.WriteLine("{3} Movies from {0} to {1}, {2} duplicates.", idMovieMin, idMovieMax, duplicateMovies.Count, firstMovies.Count);
 
             Dictionary<int, User> firstUsers;
             Dictionary<int, List<User>> duplicateUsers;
-            User.ReadUsers( Path.Combine( _badDataPath, "users.dat" ), out firstUsers, out duplicateUsers );
+            User.ReadUsers(Path.Combine(_badDataPath, "users.dat"), out firstUsers, out duplicateUsers);
             int idUserMin = firstUsers.Keys.Min();
             int idUserMax = firstUsers.Keys.Max();
-            Console.WriteLine( "{3} Users from {0} to {1}, {2} duplicates.", idUserMin, idUserMax, duplicateUsers.Count, firstUsers.Count );
+            Console.WriteLine("{3} Users from {0} to {1}, {2} duplicates.", idUserMin, idUserMax, duplicateUsers.Count, firstUsers.Count);
 
-            Dictionary<int,string> badLines;
-            int nbRating = User.ReadRatings( Path.Combine( _badDataPath, "ratings.dat" ), firstUsers, firstMovies, out badLines );
-            Console.WriteLine( "{0} Ratings: {1} bad lines.", nbRating, badLines.Count );
+            Dictionary<int, string> badLines;
+            int nbRating = User.ReadRatings(Path.Combine(_badDataPath, "ratings.dat"), firstUsers, firstMovies, out badLines);
+            Console.WriteLine("{0} Ratings: {1} bad lines.", nbRating, badLines.Count);
 
-            Directory.CreateDirectory( _goodDataPath );
+            Directory.CreateDirectory(_goodDataPath);
             // Saves Movies
-            using( TextWriter w = File.CreateText( Path.Combine( _goodDataPath, "movies.dat" ) ) )
+            using (TextWriter w = File.CreateText(Path.Combine(_goodDataPath, "movies.dat")))
             {
                 int idMovie = 0;
-                foreach( Movie m in firstMovies.Values )
+                foreach (Movie m in firstMovies.Values)
                 {
                     m.MovieID = ++idMovie;
-                    w.WriteLine( "{0}::{1}::{2}", m.MovieID, m.Title, String.Join( "|", m.Categories ) );
+                    w.WriteLine("{0}::{1}::{2}", m.MovieID, m.Title, String.Join("|", m.Categories));
                 }
             }
 
             // Saves Users
             string[] occupations = new string[]{
-                "other", 
-                "academic/educator", 
-                "artist", 
+                "other",
+                "academic/educator",
+                "artist",
                 "clerical/admin",
                 "college/grad student",
                 "customer service",
@@ -69,32 +70,32 @@ namespace Algo.Tests
                 "tradesman/craftsman",
                 "unemployed",
                 "writer" };
-            using( TextWriter w = File.CreateText( Path.Combine( _goodDataPath, "users.dat" ) ) )
+            using (TextWriter w = File.CreateText(Path.Combine(_goodDataPath, "users.dat")))
             {
                 int idUser = 0;
-                foreach( User u in firstUsers.Values )
+                foreach (User u in firstUsers.Values)
                 {
                     u.UserID = ++idUser;
                     string occupation;
                     int idOccupation;
-                    if( int.TryParse( u.Occupation, out idOccupation ) 
-                        && idOccupation >= 0 
-                        && idOccupation < occupations.Length )
+                    if (int.TryParse(u.Occupation, out idOccupation)
+                        && idOccupation >= 0
+                        && idOccupation < occupations.Length)
                     {
                         occupation = occupations[idOccupation];
                     }
                     else occupation = occupations[0];
-                    w.WriteLine( "{0}::{1}::{2}::{3}::{4}", u.UserID, u.Male ? 'M' : 'F', u.Age, occupation, "US-"+u.ZipCode );
+                    w.WriteLine("{0}::{1}::{2}::{3}::{4}", u.UserID, u.Male ? 'M' : 'F', u.Age, occupation, "US-" + u.ZipCode);
                 }
             }
             // Saves Rating
-            using( TextWriter w = File.CreateText( Path.Combine( _goodDataPath, "ratings.dat" ) ) )
+            using (TextWriter w = File.CreateText(Path.Combine(_goodDataPath, "ratings.dat")))
             {
-                foreach( User u in firstUsers.Values )
+                foreach (User u in firstUsers.Values)
                 {
-                    foreach( var r in u.Ratings )
+                    foreach (var r in u.Ratings)
                     {
-                        w.WriteLine( "{0}::{1}::{2}", u.UserID, r.Key.MovieID, r.Value );
+                        w.WriteLine("{0}::{1}::{2}", u.UserID, r.Key.MovieID, r.Value);
                     }
                 }
             }
@@ -104,12 +105,25 @@ namespace Algo.Tests
         public void ReadMovieData()
         {
             RecoContext c = new RecoContext();
-            c.LoadFrom( _goodDataPath );
-            for( int i = 0; i < c.Users.Length; ++i )
-                Assert.That( c.Users[i].UserID, Is.EqualTo( i+1 ) );
-            for( int i = 0; i < c.Movies.Length; ++i )
-                Assert.That( c.Movies[i].MovieID, Is.EqualTo( i+1 ) );
+            c.LoadFrom(_goodDataPath);
+            for (int i = 0; i < c.Users.Length; ++i)
+                Assert.That(c.Users[i].UserID, Is.EqualTo(i + 1));
+            for (int i = 0; i < c.Movies.Length; ++i)
+                Assert.That(c.Movies[i].MovieID, Is.EqualTo(i + 1));
         }
 
+        [Test]
+        public void DistanceBetweenUserTest()
+        {
+            RecoContext c = new RecoContext();
+            c.LoadFrom(_goodDataPath);
+            double d = c.Distance(c.Users[3], c.Users[4836]);
+            var users = c.Users.ToList();
+            users.ForEach(x => users.ForEach(y =>
+            {
+                double dist = c.Distance(x, y);
+                Console.WriteLine($"{x.UserID} & {y.UserID} : {dist}");
+            }));
+        }
     }
 }
