@@ -10,8 +10,8 @@ namespace Algo.Tests
     [TestFixture]
     public class Reco
     {
-        static string _badDataPath = @"E:\Intech\2015-1\S9-10\Algo\ThirdParty\MovieData\MovieLens\";
-        static string _goodDataPath = @"E:\Intech\2015-1\S9-10\Algo\ThirdParty\MovieData\";
+        static string _badDataPath = @"C:\Intech\2016-1\S9-10\Repo\ThirdParty\MovieData\MovieLens\";
+        static string _goodDataPath = @"C:\Intech\2016-1\S9-10\Repo\ThirdParty\MovieData\";
 
         [Test]
         public void CorrectData()
