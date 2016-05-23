@@ -119,7 +119,7 @@ namespace Algo.Tests
         {
             RecoContext c = new RecoContext();
             c.LoadFrom(_goodDataPath);
-            double d = c.Distance(c.Users[3], c.Users[4836]);
+            double d = c.GetSimilarity(c.Users[3], c.Users[4836]);
             var users = c.Users.ToList();
 
             var us1 = Partitioner.Create(users);
@@ -128,7 +128,7 @@ namespace Algo.Tests
             List<string> values = new List<string>();
             Parallel.ForEach(us1, x => Parallel.ForEach(us2, y =>
             {
-                double dist = c.Distance(x, y);
+                double dist = c.GetSimilarity(x, y);
                 values.Add($"{x.UserID} & {y.UserID} : {dist}");
             }));
         }

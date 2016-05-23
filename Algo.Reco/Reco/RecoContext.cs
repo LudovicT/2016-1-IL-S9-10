@@ -52,7 +52,7 @@ namespace Algo
 
         ConcurrentDictionary<TwoUserKey, double> _cacheDistance;
 
-        public double Distance(User u1, User u2)
+        public double GetSimilarity(User u1, User u2)
         {
             if (u1 == u2) return 0;
             double value;
@@ -125,6 +125,45 @@ namespace Algo
             _cacheDistance.TryAdd(key, distance);
             return -1.0;
 
+        }
+
+        public IReadOnlyCollection<SimilarUser> GetSimilarUsers( User u, int count = 100 )
+        {
+            BestKeeper<SimilarUser> best = new BestKeeper<SimilarUser>(count, (u1, u2) => Math.Sign( u1.Similarity - u2.Similarity ) );
+
+            foreach( var other in Users )
+            {
+                if (other != u) best.AddCandidate(new SimilarUser(other, GetSimilarity(u, other)));
+            }
+            return best;
+        }
+
+        public IEnumerable<Movie> GetRecommendationsFor( User u, int count = 100 )
+        {
+            if (u == null) throw new ArgumentNullException(nameof( u ));
+
+            if (u.Ratings.Count == 0) return Enumerable.Empty<Movie>();
+
+            var similarUsers = GetSimilarUsers(u, count);
+
+            return similarUsers.SelectMany(
+                x => x.User.Ratings
+                    .Where(y => !u.Ratings.ContainsKey(y.Key))
+                    .Select(
+                        y => new
+                        {
+                            Movie = y.Key,
+                            Rating = y.Value,
+                            Similarity = x.Similarity
+                        })
+                ).ToLookup(x => x.Movie).Select(x =>
+                    {
+                        return new
+                        {
+                            Movie = x.Key,
+                            Weight = x.Sum(y => y.Rating * y.Similarity)
+                        };
+                    }).OrderByDescending( x => x.Weight ).Select( x => x.Movie );
         }
     }
 }
