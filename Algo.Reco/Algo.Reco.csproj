@@ -53,12 +53,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BestKeeper.cs" />
     <Compile Include="Reco\Movie.Cleanup.cs" />
     <Compile Include="Reco\User.Cleanup.cs" />
     <Compile Include="Reco\Movie.cs" />
     <Compile Include="Reco\RecoContext.cs" />
     <Compile Include="Reco\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SimilarUser.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

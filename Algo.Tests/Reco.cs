@@ -132,5 +132,28 @@ namespace Algo.Tests
                 values.Add($"{x.UserID} & {y.UserID} : {dist}");
             }));
         }
+
+        [Test]
+        public void Test_best_keeper()
+        {
+            BestKeeper<int> truc = new BestKeeper<int>(5, Comparer<int>.Default);
+            truc.AddCandidate(50);
+            truc.AddCandidate(40);
+            truc.AddCandidate(30);
+            truc.AddCandidate(20);
+            truc.AddCandidate(20);
+            truc.AddCandidate(20);
+            truc.AddCandidate(20);
+            truc.AddCandidate(20);
+            truc.AddCandidate(10);
+            truc.AddCandidate(0);
+            truc.AddCandidate(45);
+            truc.AddCandidate(25);
+
+            foreach ( var i in truc )
+            {
+                Console.WriteLine(i);
+            }
+        }
     }
 }
