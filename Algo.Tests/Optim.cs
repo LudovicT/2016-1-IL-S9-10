@@ -15,7 +15,7 @@ namespace Algo.Tests
         [Test]
         public void GetFlights()
         {
-            FlightDatabase db = new FlightDatabase( @"C:\Intech\2016-1\S9-10\Repo\ThirdParty\FlightData\" );
+            FlightDatabase db = new FlightDatabase( @"..\..\..\ThirdParty\FlightData\" );
 
             {
                 var f0 = db.GetFlights( new DateTime( 2010, 7, 26 ), Airport.FindByCode( "BER" ), Airport.FindByCode( "LHR" ) );
