@@ -29,12 +29,12 @@ namespace Algo
             int index = Array.BinarySearch(_items, 0, _count, candidate, _comp);
 
             if (index < 0) index = ~index;
-            if (index >= Capacity) return false;
+            if (index >= _items.Length) return false;
 
-            int moveLength = Count - index - 1;
+            int moveLength = _count - index - 1;
             if (moveLength > 0) Array.Copy(_items, index, _items, index + 1, moveLength);
             _items[index] = candidate;
-            if (_count < Capacity) _count++;
+            if (_count < _items.Length) _count++;
             return true;
 
         }
