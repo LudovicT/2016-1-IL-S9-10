@@ -165,5 +165,16 @@ namespace Algo
                         };
                     }).OrderByDescending( x => x.Weight ).Select( x => x.Movie );
         }
+
+        public IEnumerable<Movie> GetRecommendationsFor( Movie m, int count = 100 )
+        {
+            if( m == null ) throw new ArgumentNullException( nameof( m ) );
+
+            //take user who like this movie
+
+            //take the other movie that user like
+
+            throw new NotImplementedException();
+        }
     }
 }
